@@ -1,8 +1,11 @@
+import org.telegram.telegrambots.meta.api.objects.User;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class SQL {
@@ -120,6 +123,23 @@ public class SQL {
         return shopName;
     }
 
+
+    public static ArrayList<Person> getListUsers() {
+        ArrayList<Person> usersArrayList = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop");
+                while (resultSet.next()) {
+                    usersArrayList.add(new Person(resultSet.getString("UserName"), resultSet.getInt("ChatId")));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return usersArrayList;
+    }
 }
 
 
