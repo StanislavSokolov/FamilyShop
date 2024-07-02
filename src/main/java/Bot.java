@@ -42,14 +42,6 @@ public final class Bot extends TelegramLongPollingBot {
     // Получая данные с нажатой кнопки пишем их в data
     private String data;
 
-    // Текущий токен для обращения к API
-    private String token;
-
-    // Флаг ввода токена
-    private int setToken = 0;
-
-    boolean coincidence = false;
-
     public Bot(String botName, String botToken) {
         super();
         this.BOT_NAME = botName;
@@ -78,25 +70,32 @@ public final class Bot extends TelegramLongPollingBot {
             System.out.print("chatId: " + chatId + "; ");
             System.out.print("userName: " + userName + "; ");
             System.out.println("text: " + text + ";");
+            // Проверяем id пользователя и добавляем его в базу, если он новый
+            checkChatId(chatId, userName);
             if (text.equals("/send")) {
                 ArrayList<Person> users = getListUsers();
                 if (users != null) {
                     for (Person p: users) {
-                        setAnswer((long) p.getChatId(), p.getUserName(), "Уважаемый дольщик, " + p.getUserName() + ", напоминаем, что до завершения строительства ЖК Дефанс и выдачи ключей осталось 28 месяцев. На текущий момент на ремонт у Вас накоплено 0 рублей 00 копеек.");
+                        setAnswer((long) p.getChatId(), p.getUserName(), "Уважаемый дольщик, " + p.getUserName() + ", напоминаем, что до завершения строительства ЖК Дефанс и выдачи ключей осталось 26 месяцев. На текущий момент на ремонт у Вас накоплено 1000 рублей 00 копеек.");
                     }
                 }
-            } else {
+            } else if ((text.equals("/try"))) {
+                choiceShop();
+            } else{
                 setAnswer(chatId, userName, "Такой запрос не обрабатывается");
             }
 //                int newValue = parseInt(text);
 //                if (newValue == -1) {
         } else if (update.hasCallbackQuery()) {
             data = update.getCallbackQuery().getData();
-            if (data.equals("Остатки")) {
-                String answerString = "";
+            if (data.equals("Первое")) {
+                String answerString = "Вы выбрали первое";
                 setAnswer(chatId, userName, answerString);
-            } else if (data.equals("Продажи")) {
-                String answerString = "";
+            } else if (data.equals("Второе")) {
+                String answerString = "Вы выбрали второе";
+                setAnswer(chatId, userName, answerString);
+            } else if (data.equals("Третье")) {
+                String answerString = "Вы выбрали третье";
                 setAnswer(chatId, userName, answerString);
             }
         }
@@ -109,12 +108,13 @@ public final class Bot extends TelegramLongPollingBot {
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        inlineKeyboardButton.setText("Wildberries");
-        inlineKeyboardButton.setCallbackData("Wildberries");
-        inlineKeyboardButton1.setText("Ozon");
-        inlineKeyboardButton1.setCallbackData("Ozon");
-        inlineKeyboardButton2.setText("Яндекс.Маркет");
-        inlineKeyboardButton2.setCallbackData("Яндекс.Маркет");
+        inlineKeyboardButton.setText("Первое");
+        inlineKeyboardButton.setUrl("https://core.telegram.org/bots/api#answerwebappquery");
+        //inlineKeyboardButton.setCallbackData("Первое");
+        inlineKeyboardButton1.setText("Второе");
+        inlineKeyboardButton1.setCallbackData("Второе");
+        inlineKeyboardButton2.setText("Третье");
+        inlineKeyboardButton2.setCallbackData("Третье");
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
         keyboardButtonsRow.add(inlineKeyboardButton1);
@@ -123,8 +123,9 @@ public final class Bot extends TelegramLongPollingBot {
         rowList.add(keyboardButtonsRow);
         inlineKeyboardMarkup.setKeyboard(rowList);
         sendMessage.setChatId(chatId.toString());
-        sendMessage.setText("Выберите магазин для управления");
+        sendMessage.setText("Выберите действие");
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        sendMessage.enableHtml(true);
         setAnswer(sendMessage);
     }
     // Шаг "Выбор действия"
