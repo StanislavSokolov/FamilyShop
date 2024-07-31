@@ -28,7 +28,7 @@ public class SQL {
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
             props.load(in);
         }
         String url = props.getProperty("url");
