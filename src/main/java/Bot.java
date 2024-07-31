@@ -72,16 +72,18 @@ public final class Bot extends TelegramLongPollingBot {
             System.out.println("text: " + text + ";");
             // Проверяем id пользователя и добавляем его в базу, если он новый
             checkChatId(chatId, userName);
-            if (text.equals("/send")) {
-                ArrayList<Person> users = getListUsers();
-                if (users != null) {
-                    for (Person p: users) {
-                        setAnswer((long) p.getChatId(), p.getUserName(), "Уважаемый дольщик, " + p.getUserName() + ", напоминаем, что до завершения строительства ЖК Дефанс и выдачи ключей осталось 26 месяцев. На текущий момент на ремонт у Вас накоплено 1000 рублей 00 копеек.");
-                    }
-                }
-            } else if ((text.equals("/try"))) {
+            if (text.equals("/salesorders")) {
+                String answer = getStatistics();
+                setAnswer((long) chatId, userName, answer);
+            } else if ((text.equals("/itemoftheday"))) {
                 choiceShop();
-            } else{
+            } else if ((text.equals("/moreinformation"))) {
+                choiceShop();
+            } else if ((text.equals("/stock"))) {
+                choiceShop();
+            } else if ((text.equals("/control"))) {
+                choiceShop();
+            } else {
                 setAnswer(chatId, userName, "Такой запрос не обрабатывается");
             }
 //                int newValue = parseInt(text);
@@ -169,6 +171,20 @@ public final class Bot extends TelegramLongPollingBot {
     // Получаем список пользователей из базы данных
     private ArrayList<Person> getListUsers() {
         return SQL.getListUsers();
+    }
+
+    private String getStatistics() {
+        return "Статистика: "
+                + "\n"
+                + "\n"
+                + "Заказали: "
+                + SQL.getOrder()
+                + "\n"
+                + "Купили: "
+                + SQL.getSale()
+                + "\n"
+                + "Вернули: "
+                + SQL.getCancel();
     }
 
     // Проверяем токен в базе данных

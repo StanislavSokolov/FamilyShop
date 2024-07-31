@@ -140,6 +140,57 @@ public class SQL {
         }
         return usersArrayList;
     }
+
+    public static int getOrder() {
+        int i = 0;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM item WHERE cdate = '" + URLRequestResponse.getDateCurrent() + "' and status = 'ordered'");
+                while (resultSet.next()) {
+                     i++;
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return i;
+    }
+
+    public static int getSale() {
+        int i = 0;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM item WHERE sdate = '" + URLRequestResponse.getDateCurrent() + "' and status = 'sold'");
+                while (resultSet.next()) {
+                    i++;
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return i;
+    }
+
+    public static int getCancel() {
+        int i = 0;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM item WHERE cdate = '" + URLRequestResponse.getDateCurrent() + "' and status = 'cancelled'");
+                while (resultSet.next()) {
+                    i++;
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return i;
+    }
 }
 
 
