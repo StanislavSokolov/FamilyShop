@@ -7,6 +7,62 @@ public class Item {
     private int finishedPrice;
     private int forPay;
     private String odid;
+    private int product_id;
+    private int countSales;
+
+    public int getCountSales() {
+        return countSales;
+    }
+
+    public void setCountSales(int countSales) {
+        this.countSales = countSales;
+    }
+
+    public int getCountOrders() {
+        return countOrders;
+    }
+
+    public void setCountOrders(int countOrders) {
+        this.countOrders = countOrders;
+    }
+
+    private int countOrders;
+    private int count;
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    private String subject;
+    private String supplierArticle;
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getSupplierArticle() {
+        return supplierArticle;
+    }
+
+    public void setSupplierArticle(String supplierArticle) {
+        this.supplierArticle = supplierArticle;
+    }
+
+    public int getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(int product_id) {
+        this.product_id = product_id;
+    }
 
     public int getId() {
         return id;
@@ -96,8 +152,14 @@ public class Item {
         this.status = status;
     }
 
-    public Item(int id, String cdate, String ctime, String sdate, String stime, int finishedPrice, int forPay, String odid, String oblastOkrugName, String warehouseName, String status) {
+    public Item(int product_id, String status) {
+        this.product_id = product_id;
+        this.status = status;
+    }
+
+    public Item(int id, int product_id, String cdate, String ctime, String sdate, String stime, int finishedPrice, int forPay, String odid, String oblastOkrugName, String warehouseName, String status) {
         this.id = id;
+        this.product_id = product_id;
         this.cdate = cdate;
         this.ctime = ctime;
         this.sdate = sdate;

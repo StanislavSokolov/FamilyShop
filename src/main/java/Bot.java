@@ -76,7 +76,8 @@ public final class Bot extends TelegramLongPollingBot {
                 String answer = getStatistics();
                 setAnswer((long) chatId, userName, answer);
             } else if ((text.equals("/itemoftheday"))) {
-                choiceShop();
+                String answer = getItemOfTheDay();
+                setAnswer((long) chatId, userName, answer);
             } else if ((text.equals("/moreinformation"))) {
                 choiceShop();
             } else if ((text.equals("/stock"))) {
@@ -178,13 +179,20 @@ public final class Bot extends TelegramLongPollingBot {
                 + "\n"
                 + "\n"
                 + "Заказали: "
-                + SQL.getOrder()
+                + SQL.getCountOrders()
                 + "\n"
                 + "Купили: "
-                + SQL.getSale()
+                + SQL.getCountSales()
                 + "\n"
                 + "Вернули: "
-                + SQL.getCancel();
+                + SQL.getCountCancels();
+    }
+
+    private String getItemOfTheDay() {
+        return "Товар дня: "
+                + "\n"
+                + "\n"
+                + SQL.getItemOfTheDayString();
     }
 
     // Проверяем токен в базе данных

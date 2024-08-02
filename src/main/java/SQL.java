@@ -141,7 +141,7 @@ public class SQL {
         return usersArrayList;
     }
 
-    public static int getOrder() {
+    public static int getCountOrders() {
         int i = 0;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -158,7 +158,7 @@ public class SQL {
         return i;
     }
 
-    public static int getSale() {
+    public static int getCountSales() {
         int i = 0;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -175,7 +175,7 @@ public class SQL {
         return i;
     }
 
-    public static int getCancel() {
+    public static int getCountCancels() {
         int i = 0;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -190,6 +190,105 @@ public class SQL {
             System.out.println(ex);
         }
         return i;
+    }
+
+    public static String getItemOfTheDayString() {
+        ArrayList<Item> itemsArrayList = getItem(getItemsArrayList());
+        String item = "Не определен";
+        if (!itemsArrayList.isEmpty()) {
+            itemsArrayList.sort((o1, o2) -> o2.getCount() - o1.getCount());
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+                try (Connection conn = getConnection()) {
+                    Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery("SELECT * FROM product WHERE id = " + itemsArrayList.get(0).getProduct_id());
+                    while (resultSet.next()) {
+                        itemsArrayList.get(0).setSubject(resultSet.getString("subject"));
+                        itemsArrayList.get(0).setSupplierArticle(resultSet.getString("supplierArticle"));
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+            item = itemsArrayList.get(0).getSubject() + " (" + itemsArrayList.get(0).getSupplierArticle() + ") "
+                    + "\n"
+                    + "\n"
+                    + "Закали: "
+                    + itemsArrayList.get(0).getCountSales()
+                    + " шт."
+                    + "\n"
+                    + "Купили: "
+                    + itemsArrayList.get(0).getCountOrders()
+                    + " шт.";
+        }
+
+        return item;
+    }
+
+    public static ArrayList<Item> getItemsArrayList() {
+        ArrayList<Item> itemsArrayList = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM item WHERE sdate = '" + URLRequestResponse.getDateCurrent() + "' and status = 'sold'");
+                while (resultSet.next()) {
+                    itemsArrayList.add(new Item(resultSet.getInt("product_id"), resultSet.getString("status")));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM item WHERE cdate = '" + URLRequestResponse.getDateCurrent() + "' and status = 'ordered'");
+                while (resultSet.next()) {
+                    itemsArrayList.add(new Item(resultSet.getInt("product_id"), resultSet.getString("status")));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return itemsArrayList;
+    }
+
+    public static ArrayList<Item> getItem(ArrayList<Item> itemsArrayList) {
+        System.out.println(itemsArrayList.size());
+        for (Item i: itemsArrayList) {
+            System.out.println(i.getProduct_id() + " " + i.getStatus());
+        }
+        ArrayList<Item> items = new ArrayList<>();
+        for (Item i: itemsArrayList) {
+            if (items.isEmpty()) {
+                i.setCount(1);
+                if (i.getStatus().equals("sold")) i.setCountSales(1);
+                else if (i.getStatus().equals("ordered")) i.setCountOrders(1);
+                items.add(i);
+            }
+            else {
+                boolean coincidence = false;
+                for (Item j: items) {
+                    if (i.getProduct_id() == j.getProduct_id()) {
+                        j.setCount(j.getCount() + 1);
+                        if (i.getStatus().equals("sold")) j.setCountSales(j.getCountSales() + 1);
+                        else if (i.getStatus().equals("ordered")) j.setCountOrders(j.getCountOrders() + 1);
+                        coincidence = true;
+                    }
+                }
+                if (!coincidence) {
+                    i.setCount(1);
+                    if (i.getStatus().equals("sold")) i.setCountSales(1);
+                    else if (i.getStatus().equals("ordered")) i.setCountOrders(1);
+                    items.add(i);
+                }
+            }
+        }
+        for (Item i: items) {
+            System.out.println(i.getCountSales() + " " + i.getCountOrders() + " " + i.getCount());
+        }
+        return items;
     }
 }
 
