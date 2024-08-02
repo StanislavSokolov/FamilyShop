@@ -192,6 +192,43 @@ public class SQL {
         return i;
     }
 
+    public static String getMoreInformstionString() {
+        ArrayList<Item> itemsArrayList = getItem(getItemsArrayList());
+        String item = "";
+        if (!itemsArrayList.isEmpty()) {
+            itemsArrayList.sort((o1, o2) -> o2.getCount() - o1.getCount());
+            for (Item i: itemsArrayList) {
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+                    try (Connection conn = getConnection()) {
+                        Statement statement = conn.createStatement();
+                        ResultSet resultSet = statement.executeQuery("SELECT * FROM product WHERE id = " + i.getProduct_id());
+                        while (resultSet.next()) {
+                            i.setSubject(resultSet.getString("subject"));
+                            i.setSupplierArticle(resultSet.getString("supplierArticle"));
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+                item = item + i.getSubject() + " (" + i.getSupplierArticle() + "): "
+                        + "\n"
+                        + "\n"
+                        + "Закали: "
+                        + i.getCountOrders()
+                        + " шт."
+                        + "\n"
+                        + "Купили: "
+                        + i.getCountSales()
+                        + " шт."
+                        + "\n"
+                        + "\n";
+            }
+        }
+
+        return item;
+    }
+
     public static String getItemOfTheDayString() {
         ArrayList<Item> itemsArrayList = getItem(getItemsArrayList());
         String item = "Не определен";
@@ -210,15 +247,15 @@ public class SQL {
             } catch (Exception ex) {
                 System.out.println(ex);
             }
-            item = itemsArrayList.get(0).getSubject() + " (" + itemsArrayList.get(0).getSupplierArticle() + ") "
+            item = itemsArrayList.get(0).getSubject() + " (" + itemsArrayList.get(0).getSupplierArticle() + "): "
                     + "\n"
                     + "\n"
                     + "Закали: "
-                    + itemsArrayList.get(0).getCountSales()
+                    + itemsArrayList.get(0).getCountOrders()
                     + " шт."
                     + "\n"
                     + "Купили: "
-                    + itemsArrayList.get(0).getCountOrders()
+                    + itemsArrayList.get(0).getCountSales()
                     + " шт.";
         }
 

@@ -11,13 +11,13 @@ import java.util.Properties;
 public class BotSettings {
     public static String getProperties(String key) throws IOException {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
             props.load(in);
         }
         String s = null;
 
-        if (key.equals("botName")) s = props.getProperty("botName");
-        else if (key.equals("botToken")) s = props.getProperty("botToken");
+        if (key.equals("botName")) s = props.getProperty("botName1");
+        else if (key.equals("botToken")) s = props.getProperty("botToken1");
         return s;
     }
 
