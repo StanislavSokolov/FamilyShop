@@ -28,7 +28,7 @@ public class SQL {
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
             props.load(in);
         }
         String url = props.getProperty("url");
@@ -193,7 +193,7 @@ public class SQL {
     }
 
     public static String getMoreInformstionString() {
-        ArrayList<Item> itemsArrayList = getItem(getItemsArrayList());
+        ArrayList<Item> itemsArrayList = getItemSalesOrders(getItemsArrayListStatus());
         String item = "";
         if (!itemsArrayList.isEmpty()) {
             itemsArrayList.sort((o1, o2) -> o2.getCount() - o1.getCount());
@@ -229,8 +229,39 @@ public class SQL {
         return item;
     }
 
+    public static String getStocksString() {
+        ArrayList<Item> items = getItemsArrayListStock();
+        String item = "";
+
+        System.out.println(items.size());
+
+        if (!items.isEmpty()) {
+            for (Item i: items) {
+                String stocks = "";
+                if (!i.getStocks().isEmpty()) {
+                    for (Stock st: i.getStocks()) {
+                        if (st.getQuantityFull() != 0) {
+                            stocks = stocks
+                                + "\n"
+                                + st.getWarehouseName()
+                                + ": "
+                                + st.getQuantityFull();
+                        }
+                    }
+                    item = item + i.getSubject() + " (" + i.getSupplierArticle() + "): "
+                            + "\n"
+                            + stocks
+                            + "\n"
+                            + "\n";
+                }
+            }
+        }
+
+        return item;
+    }
+
     public static String getItemOfTheDayString() {
-        ArrayList<Item> itemsArrayList = getItem(getItemsArrayList());
+        ArrayList<Item> itemsArrayList = getItemSalesOrders(getItemsArrayListStatus());
         String item = "Не определен";
         if (!itemsArrayList.isEmpty()) {
             itemsArrayList.sort((o1, o2) -> o2.getCount() - o1.getCount());
@@ -262,7 +293,7 @@ public class SQL {
         return item;
     }
 
-    public static ArrayList<Item> getItemsArrayList() {
+    public static ArrayList<Item> getItemsArrayListStatus() {
         ArrayList<Item> itemsArrayList = new ArrayList<>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -291,7 +322,41 @@ public class SQL {
         return itemsArrayList;
     }
 
-    public static ArrayList<Item> getItem(ArrayList<Item> itemsArrayList) {
+    public static ArrayList<Item> getItemsArrayListStock() {
+        ArrayList<Item> itemsArrayList = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM product");
+                while (resultSet.next()) {
+                    itemsArrayList.add(new Item(resultSet.getInt("id"), resultSet.getString("subject"), resultSet.getString("supplierArticle")));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        if (!itemsArrayList.isEmpty()) {
+            for (Item i: itemsArrayList) {
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+                    try (Connection conn = getConnection()) {
+                        Statement statement = conn.createStatement();
+                        ResultSet resultSet = statement.executeQuery("SELECT * FROM stock WHERE product_id = " + i.getProduct_id());
+                        while (resultSet.next()) {
+                            i.getStocks().add(new Stock(resultSet.getString("warehouseName"), resultSet.getInt("quantity"), resultSet.getInt("quantityFull"), resultSet.getInt("inWayFromClient")));
+
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+            }
+        }
+        return itemsArrayList;
+    }
+
+    public static ArrayList<Item> getItemSalesOrders(ArrayList<Item> itemsArrayList) {
         System.out.println(itemsArrayList.size());
         for (Item i: itemsArrayList) {
             System.out.println(i.getProduct_id() + " " + i.getStatus());

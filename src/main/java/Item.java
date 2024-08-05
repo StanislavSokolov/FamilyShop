@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Item {
     private int id;
     private String cdate;
@@ -155,6 +158,23 @@ public class Item {
     public Item(int product_id, String status) {
         this.product_id = product_id;
         this.status = status;
+    }
+
+    private ArrayList<Stock> stocks;
+
+    public ArrayList<Stock> getStocks() {
+        return stocks;
+    }
+
+    public void setStocks(ArrayList<Stock> stocks) {
+        this.stocks = stocks;
+    }
+
+    public Item(int product_id, String subject, String supplierArticle) {
+        this.product_id = product_id;
+        this.subject = subject;
+        this.supplierArticle = supplierArticle;
+        this.stocks = new ArrayList<>();
     }
 
     public Item(int id, int product_id, String cdate, String ctime, String sdate, String stime, int finishedPrice, int forPay, String odid, String oblastOkrugName, String warehouseName, String status) {

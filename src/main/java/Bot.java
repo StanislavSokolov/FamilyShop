@@ -82,7 +82,8 @@ public final class Bot extends TelegramLongPollingBot {
                 String answer = getMoreInformstion();
                 setAnswer((long) chatId, userName, answer);
             } else if ((text.equals("/stock"))) {
-                setAnswer((long) chatId, userName, "Сервис недоступен");
+                String answer = getStocks();
+                setAnswer((long) chatId, userName, answer);
             } else if ((text.equals("/control"))) {
                 setAnswer((long) chatId, userName, "Сервис недоступен");
             } else {
@@ -201,6 +202,13 @@ public final class Bot extends TelegramLongPollingBot {
                 + "\n"
                 + "\n"
                 + SQL.getMoreInformstionString();
+    }
+
+    private String getStocks() {
+        return "Остатки на складах: "
+                + "\n"
+                + "\n"
+                + SQL.getStocksString();
     }
 
 
