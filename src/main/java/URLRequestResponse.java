@@ -1,13 +1,3 @@
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -19,84 +9,72 @@ import java.util.*;
 
 public class URLRequestResponse {
 
-    public static URL generateURL(int shop, int method, String token) {
-        int shopNumber = shop;
-        int methodNumber = method;
+    public static URL generateURL(String shop, String method, String token) {
+        String shopNumber = shop;
+        String methodNumber = method;
         String dataAPI = null;
         String dataMethod = null;
-        switch (shopNumber){
-            case (2):
+        if (shopNumber.equals("wb")) {
+            if (methodNumber.equals("stocks")) {
+                dataAPI = "https://statistics-api.wildberries.ru";
+                dataMethod = "/api/v1/supplier/stocks?dateFrom=" + getDateCurrent() + "T00%3A00%3A00.000Z&key=" + token;
+            }
+            if (methodNumber.equals("sales")) {
+                dataAPI = "https://statistics-api.wildberries.ru";
+                dataMethod = "/api/v1/supplier/sales?dateFrom=" + getDate(-7) + "T00%3A00%3A00.000Z&key=" + token;
+            }
+            if (methodNumber.equals("orders")) {
+                dataAPI = "https://statistics-api.wildberries.ru";
+                dataMethod = "/api/v1/supplier/orders?dateFrom=" + getDate(-7) + "T00%3A00%3A00.000Z&key=" + token;
+            }
+            if (methodNumber.equals("info")) {
+                dataAPI = "https://discounts-prices-api.wb.ru";
+                dataMethod = "/api/v2/list/goods/filter?limit=1000&offset=0";
+            }
+            if (methodNumber.equals("prices")) {
                 dataAPI = "https://suppliers-api.wildberries.ru";
-                switch (methodNumber){
-                    case (1):
-                        dataMethod = "/public/api/v1/info?quantity=0";
-                        break;
-                    case (2):
-                        dataMethod = "/public/api/v1/prices";
-                        break;
-                    case (3):
-                        dataMethod = "/public/api/v1/updateDiscounts";
-                        break;
-                    case (4):
-                        dataMethod = "/public/api/v1/updatePromocodes";
-                        break;
-                    case (5):
-                        dataAPI = "https://suppliers-stats.wildberries.ru";
-                        dataMethod = "/api/v1/supplier/stocks?dateFrom=" + getDateCurrent() + "T00%3A00%3A00.000Z&key=" + token;
-                        break;
-                    case (6):
-                        dataAPI = "https://suppliers-stats.wildberries.ru";
-                        dataMethod = "/api/v1/supplier/sales?dateFrom=" + getDateCurrent() + "T00%3A00%3A00.000Z&key=" + token;
-                        break;
-                    case (7):
-                        dataAPI = "https://suppliers-stats.wildberries.ru";
-                        dataMethod = "/api/v1/supplier/orders?dateFrom=" + getDateCurrent() + "T00%3A00%3A00.000Z&key=" + token;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case (1):
+                dataMethod = "/public/api/v1/prices";
+            }
+            if (methodNumber.equals("updateDiscounts")) {
                 dataAPI = "https://suppliers-api.wildberries.ru";
-                switch (methodNumber){
-                    case (1):
-                        dataMethod = "/public/api/v1/info?quantity=0";
-                        break;
-                    case (2):
-                        dataMethod = "/public/api/v1/prices";
-                        break;
-                    case (3):
-                        dataMethod = "/public/api/v1/updateDiscounts";
-                        break;
-                    case (4):
-                        dataMethod = "/public/api/v1/updatePromocodes";
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case (3):
-                dataAPI = "https://api-seller.ozon.ru";
-                switch (methodNumber){
-                    case (1):
-                        dataMethod = "/v2/product/list";
-                        break;
-                    case (2):
-                        dataMethod = "/v2/product/info";
-                        break;
-                    case (3):
-                        dataMethod = "/v2/posting/fbo/list";
-                        break;
-                    case (4):
-                        dataMethod = "/v1/product/import/prices";
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
+                dataMethod = "/public/api/v1/updateDiscounts";
+            }
+            if (methodNumber.equals("updatePromocodes")) {
+                dataAPI = "https://suppliers-api.wildberries.ru";
+                dataMethod = "/public/api/v1/updatePromocodes";
+            }
+            if (methodNumber.equals("getList")) {
+                dataAPI = "https://suppliers-api.wildberries.ru";
+                dataMethod = "/content/v1/cards/cursor/list";
+            }
+            if (methodNumber.equals("getCard")) {
+                dataAPI = "https://suppliers-api.wildberries.ru";
+                dataMethod = "/content/v2/get/cards/list";
+            }
+            if (methodNumber.equals("warehouses")) {
+                dataAPI = "https://suppliers-api.wildberries.ru";
+                dataMethod = "/api/v1/warehouses";
+            }
+            if (methodNumber.equals("options")) {
+                dataAPI = "https://supplies-api.wildberries.ru/";
+                dataMethod = "/api/v1/acceptance/options?quantity=5&barcode=2040764686667";
+            }
+//            if (methodNumber.equals("getRating")) {
+//                dataAPI = "https://feedbacks-api.wildberries.ru";
+//                dataMethod = "/api/v1/feedbacks/products/rating/nmid" + "?" + arrayList.get(0).getKey() + "=" + arrayList.get(0).getData();
+//            }
+        } else if (shopNumber.equals("ozon")) {
+            dataAPI = "https://api-seller.ozon.ru";
+            if (methodNumber.equals("list"))
+                dataMethod = "/v2/product/list";
+            if (methodNumber.equals("info"))
+                dataMethod = "/v2/product/info";
+            if (methodNumber.equals("fbo/list"))
+                dataMethod = "/v2/posting/fbo/list";
+            if (methodNumber.equals("import/prices"))
+                dataMethod = "/v1/product/import/prices";
         }
+
         URL url = null;
         try {
             url = new URL(dataAPI + dataMethod);
@@ -158,46 +136,76 @@ public class URLRequestResponse {
         return year + "-" + month1 + "-" + day;
     }
 
-    public static String getResponseFromURL(URL url, String token) throws IOException, URISyntaxException {
+    public static String getResponseFromURLandBodyRequest(URL url, String token, String supplierArticle) throws IOException {
+
+        String reqBody = "";
+
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        httpURLConnection.setRequestProperty("accept", "application/json");
+        httpURLConnection.setRequestProperty("Authorization", token);
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setRequestMethod("POST");
+        OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
+//        reqBody = "{\"settings\":{\"cursor\"}[\"" + supplierArticle + "\"],\"allowedCategoriesOnly\":true}";
+//        reqBody = "{\"settings\":{\"sort\":{\"ascending\": false}, \"filter\": {\"textSearch\": \"\", \"allowedCategoriesOnly\": true, \"tagIDs\": [ ], \"objectIDs\": [ ], \"brands\": [ ], \"imtID\": " + supplierArticle + " , \"withPhoto\": -1}, \"cursor\": {\"updatedAt\": \"\", \"nmID\": 0, \"limit\": 11} } }";
+        reqBody = "{\"settings\":{\"cursor\": {\"limit\": 100},\"filter\":{\"withPhoto\": -1}}}";
+        writer.write(reqBody);
+        writer.close();
+
+        System.out.println(reqBody);
+
+        return getResponse(httpURLConnection);
+    }
+
+//    public static String getResponseFromURLandBodyRequest(URL url, String token, String parametr0, String parametr1, String parametr2) throws IOException {
+//
+//        String reqBody = "";
+//
 //        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 //        httpURLConnection.setRequestProperty("accept", "application/json");
 //        httpURLConnection.setRequestProperty("Authorization", token);
-//        try {
-//            InputStream in = httpURLConnection.getInputStream();
-//            Scanner scanner = new Scanner(in);
-//            scanner.useDelimiter("\\A");
-//            boolean hasInput = scanner.hasNext();
-//            if (hasInput) {
-//                return scanner.next();
-//            } else {
-//                return null;
-//            }
-//        } finally {
-//            httpURLConnection.disconnect();
-//        }
+//        httpURLConnection.setDoOutput(true);
+//        OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
+//        reqBody = "{\"vendorCodes\":[\"" + supplierArticle + "\"],\"allowedCategoriesOnly\":true}";
+//        writer.write(reqBody);
+//        writer.close();
+//
+//        System.out.println(reqBody);
+//
+//        return getResponse(httpURLConnection);
+//    }
 
-//        System.out.println(url);
-//        System.out.println(token);
+    public static String getResponseFromURL(URL url, String token) throws IOException {
 
-        final CloseableHttpClient httpclient = HttpClients.createDefault();
-        final HttpGet httpGet = new HttpGet(url.toURI());
-        final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("accept", "application/json"));
-        params.add(new BasicNameValuePair("Authorization", token));
-        httpGet.setHeader("accept", "application/json");
-        httpGet.setHeader("Authorization", token);
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        httpURLConnection.setRequestProperty("accept", "application/json");
+        httpURLConnection.setRequestProperty("Authorization", token);
+        httpURLConnection.setDoOutput(true);
 
-        try (
-                CloseableHttpResponse response2 = httpclient.execute(httpGet)
-        ){
-            final HttpEntity entity2 = response2.getEntity();
-            String respond = EntityUtils.toString(entity2);
-            return respond;
+        return getResponse(httpURLConnection);
+    }
+
+    private static String getResponse(HttpURLConnection httpURLConnection) throws IOException {
+        try {
+            String in = httpURLConnection.getHeaderField(0);
+            System.out.println(in);
+            Scanner scanner = new Scanner(in);
+            scanner.useDelimiter("\\A");
+            boolean hasInput = scanner.hasNext();
+            if (hasInput) {
+                return scanner.next();
+            } else {
+                return null;
+            }
+        } finally {
+            httpURLConnection.disconnect();
         }
     }
 
-    public static String getResponseFromURL(URL url, String token, String client, int method, String product_id, String price) throws IOException, URISyntaxException {
 
+    public static String getResponseFromURL(URL url, String token, String client, String method, String product_id, String price) throws IOException, URISyntaxException {
+
+        String methodNumber = method;
         String reqBody = "";
 
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -206,78 +214,19 @@ public class URLRequestResponse {
         httpURLConnection.setRequestProperty("Content-Type", "application/json");
         httpURLConnection.setDoOutput(true);
         OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
-        if (method == 1) reqBody = "{\"filter\":{\"visibility\": \"ALL\"},\"last_id\": \"\", \"limit\": 100}";
-        if (method == 2) reqBody = "{\"offer_id\": \"\",\"product_id\": " + product_id + ", \"sku\": 0}";
-//        if (method == 3) reqBody = "{\"dir\": \"ASC\", \"filter\": {\"since\": \"" + getDataCurrent() + "T00:00:00.000Z\"}, \"limit\": 5, \"offset\": 0, \"translit\": true, \"with\": {\"analytics_data\": true, \"financial_data\": true}}";
-        if (method == 4) reqBody = "{\"prices\": [{\"auto_action_enabled\": \"UNKNOWN\",\"min_price\": \"100\", \"offer_id\": \"\", \"old_price\": \"0\", \"price\": \"" + price + "\", \"product_id\": " + product_id + "}]}";
-        if (method == 3) reqBody = "{\"dir\": \"ASC\", \"filter\": {\"since\": \"2022-05-29T00:00:00.000Z\"}, \"limit\": 5, \"offset\": 0, \"translit\": true, \"with\": {\"analytics_data\": true, \"financial_data\": true}}";
+        if (methodNumber.equals("list"))
+            reqBody = "{\"filter\":{\"visibility\": \"ALL\"},\"last_id\": \"\", \"limit\": 100}";
+        if (methodNumber.equals("info"))
+            reqBody = "{\"offer_id\": \"\",\"product_id\": " + product_id + ", \"sku\": 0}";
+        if (methodNumber.equals("fbo/list"))
+            reqBody = "{\"dir\": \"ASC\", \"filter\": {\"since\": \"" + getDateCurrent() + "T00:00:00.000Z\"}, \"limit\": 5, \"offset\": 0, \"translit\": true, \"with\": {\"analytics_data\": true, \"financial_data\": true}}";
+        if (methodNumber.equals("import/prices"))
+            reqBody = "{\"prices\": [{\"auto_action_enabled\": \"UNKNOWN\",\"min_price\": \"100\", \"offer_id\": \"\", \"old_price\": \"0\", \"price\": \"" + price + "\", \"product_id\": " + product_id + "}]}";
+        writer.write(reqBody);
+        writer.close();
+
         System.out.println(reqBody);
-        writer.write(reqBody);
-        writer.close();
-        try {
-            InputStream in = httpURLConnection.getInputStream();
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-            boolean hasInput = scanner.hasNext();
-            if(hasInput) {
-                return scanner.next();
-            } else {
-                return  null;
-            }
-        } finally {
-            httpURLConnection.disconnect();
-        }
-    }
 
-
-
-    public static String getResponseFromURL(URL url) throws IOException, URISyntaxException {
-//        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-//        try {
-//            InputStream in = httpURLConnection.getInputStream();
-//            Scanner scanner = new Scanner(in);
-//            scanner.useDelimiter("\\A");
-//            boolean hasInput = scanner.hasNext();
-//            if (hasInput) {
-//                return scanner.next();
-//            } else {
-//                return null;
-//            }
-//        } finally {
-//            httpURLConnection.disconnect();
-//        }
-        final CloseableHttpClient httpclient = HttpClients.createDefault();
-        final HttpUriRequest httpGet = new HttpGet(url.toURI());
-        try (CloseableHttpResponse response1 = httpclient.execute(httpGet))
-
-        {
-            final HttpEntity entity1 = response1.getEntity();
-            String respond = EntityUtils.toString(entity1);
-            return respond;
-        }
-    }
-
-    public static String getResponseFromURL(URL url, String key0, String data, String key1, int value, String token) throws IOException {
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setRequestProperty("accept", "application/json");
-        httpURLConnection.setRequestProperty("Authorization", token);
-        httpURLConnection.setDoOutput(true);
-        OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
-        String reqBody = "[{\"" + key0 + "\":" + data + ",\"" + key1 + "\":" + value + "}]";
-        writer.write(reqBody);
-        writer.close();
-        try {
-            InputStream in = httpURLConnection.getInputStream();
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-            boolean hasInput = scanner.hasNext();
-            if(hasInput) {
-                return scanner.next();
-            } else {
-                return  null;
-            }
-        } finally {
-            httpURLConnection.disconnect();
-        }
+        return getResponse(httpURLConnection);
     }
 }

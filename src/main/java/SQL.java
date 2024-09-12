@@ -28,7 +28,7 @@ public class SQL {
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
             props.load(in);
         }
         String url = props.getProperty("url");
@@ -79,6 +79,23 @@ public class SQL {
                     }
                 }
 
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return token;
+    }
+
+    public static String getToken(String nameShopWB) {
+        String token = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM user where nameShopWB = '22'");
+                while (resultSet.next()) {
+                    token = resultSet.getString("tokenStandartWB");
+                }
             }
         } catch (Exception ex) {
             System.out.println(ex);
