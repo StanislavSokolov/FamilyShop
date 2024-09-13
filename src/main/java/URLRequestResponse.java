@@ -9,7 +9,7 @@ import java.util.*;
 
 public class URLRequestResponse {
 
-    public static URL generateURL(String shop, String method, String token) {
+    public static URL generateURL(String shop, String method, String token, String warehouse) {
         String shopNumber = shop;
         String methodNumber = method;
         String dataAPI = null;
@@ -52,12 +52,12 @@ public class URLRequestResponse {
                 dataMethod = "/content/v2/get/cards/list";
             }
             if (methodNumber.equals("warehouses")) {
-                dataAPI = "https://suppliers-api.wildberries.ru";
+                dataAPI = "https://supplies-api.wildberries.ru";
                 dataMethod = "/api/v1/warehouses";
             }
-            if (methodNumber.equals("options")) {
-                dataAPI = "https://supplies-api.wildberries.ru/";
-                dataMethod = "/api/v1/acceptance/options?quantity=5&barcode=2040764686667";
+            if (methodNumber.equals("coefficients")) {
+                dataAPI = "https://supplies-api.wildberries.ru";
+                dataMethod = "/api/v1/acceptance/coefficients?warehouseIDs=" + warehouse;
             }
 //            if (methodNumber.equals("getRating")) {
 //                dataAPI = "https://feedbacks-api.wildberries.ru";
@@ -176,7 +176,6 @@ public class URLRequestResponse {
 //    }
 
     public static String getResponseFromURL(URL url, String token) throws IOException {
-
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("accept", "application/json");
         httpURLConnection.setRequestProperty("Authorization", token);
@@ -187,8 +186,7 @@ public class URLRequestResponse {
 
     private static String getResponse(HttpURLConnection httpURLConnection) throws IOException {
         try {
-            String in = httpURLConnection.getHeaderField(0);
-            System.out.println(in);
+            InputStream in = httpURLConnection.getInputStream();
             Scanner scanner = new Scanner(in);
             scanner.useDelimiter("\\A");
             boolean hasInput = scanner.hasNext();

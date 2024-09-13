@@ -1,20 +1,51 @@
 import org.json.JSONObject;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-
-import static java.lang.Integer.parseInt;
+import java.util.ArrayList;
 
 public class WarehouseSearch extends Thread {
-    
+
+    static final int ELECTROSTAL = 120762;
+    static final String ELECTROSTAL_DESCRIPTION = "ID: " + ELECTROSTAL + ", name: Электросталь, address: Московская область, Электросталь, посёлок Случайный, территория Массив 3, 5";
+    static final String ELECTROSTAL_DESCRIPTION_1 = "Электросталь, Московская область, посёлок Случайный";
+
+    static final int TULA = 206348;
+    static final String TULA_DESCRIPTION = "ID: " + TULA + ", name: Тула, address: Тульская область, муниципальное образование Алексин, 1";
+    static final String TULA_DESCRIPTION_1 = "Тула, Тульская область, муниципальное образование Алексин";
+
+    static final int NEVINOMISK = 208277;
+    static final String NEVINOMISK_DESCRIPTION = "ID: " + NEVINOMISK + ", name: Невинномысск, address: ул. Тимирязева 16";
+    static final String NEVINOMISK_DESCRIPTION_1 = "Невинномысск";
+
+    static final int KRASNODAR = 130744;
+    static final String KRASNODAR_DESCRIPTION = "ID: " + KRASNODAR + ", name: Краснодар (Тихорецкая), address: ул. Тихорецкая, 40с1";
+    static final String KRASNODAR_DESCRIPTION_1 = "Краснодар (Тихорецкая)";
+
+    static final int KOLEDINO = 507;
+    static final String KOLEDINO_DESCRIPTION = "ID: " + KOLEDINO + ", name: Коледино, address: дер. Коледино, ул. Троицкая, 20";
+    static final String KOLEDINO_DESCRIPTION_1 = "Коледино, дер. Коледино";
+
+    static final int KAZAN = 117986;
+    static final String KAZAN_DESCRIPTION = "ID :" + KAZAN + "name: Казань, address: Республика Татарстан, Зеленодольск, промышленный парк Зеленодольск, 20";
+    static final String KAZAN_DESCRIPTION_1 = "Казань, Республика Татарстан, Зеленодольск";
+
+    String prevAnswer = "Бесплатные окна: ";
+
+    ArrayList<Warehouse> warehouseArrayList;
+
     Bot bot;
 
     public WarehouseSearch(Bot bot) {
+        warehouseArrayList = new ArrayList<>();
+
+        warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL));
+        warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA));
+        warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK));
+        warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR));
+        warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO));
+        warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN));
+
         this.bot = bot;
     }
 
@@ -25,7 +56,7 @@ public class WarehouseSearch extends Thread {
         while (true) {
             try {
                 search();
-                sleep(15000);
+                sleep(65000);
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -33,55 +64,57 @@ public class WarehouseSearch extends Thread {
         }
     }
 
-    private void search() {
+    private void warehouses() {
         URL generetedURL = null;
         String response = null;
-        generetedURL = URLRequestResponse.generateURL("wb","warehouses", "");
+        generetedURL = URLRequestResponse.generateURL("wb","warehouses", "", "");
         try {
             response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
             System.out.println(response);
-//            if (!response.equals("{\"errors\":[\"(api-new) too many requests\"]}")) {
-//                JSONObject jsonObject1 = new JSONObject(response);
-//                JSONObject jsonObject = jsonObject1.getJSONObject("data");
-//                for (int i = 0; i < jsonObject.getJSONArray("listGoods").length(); i++) {
-//                    List<Product> products = user.getProducts();
-//                    if (products.isEmpty()) {
-//                        Product product = new Product("",
-//                                jsonObject.getJSONArray("listGoods").getJSONObject(i).get("nmID").toString(),
-//                                "",
-//                                parseInt(jsonObject.getJSONArray("listGoods").getJSONObject(i).getJSONArray("sizes").getJSONObject(0).get("price").toString()),
-//                                parseInt(jsonObject.getJSONArray("listGoods").getJSONObject(i).get("discount").toString()),
-//                                "wb", "", "", user);
-//                        session.save(product);
-//                    } else {
-//                        boolean coincidence = false;
-//                        for (Product p : products) {
-//                            if (p.getNmId().equals(jsonObject.getJSONArray("listGoods").getJSONObject(i).get("nmID").toString())) {
-//                                session.createQuery("update Product set price = "
-//                                        + parseInt(jsonObject.getJSONArray("listGoods").getJSONObject(i).getJSONArray("sizes").getJSONObject(0).get("price").toString())
-//                                        + " WHERE nmId = '" + jsonObject.getJSONArray("listGoods").getJSONObject(i).get("nmID").toString() + "'").executeUpdate();
-//                                session.createQuery("update Product set discount = "
-//                                        + parseInt(jsonObject.getJSONArray("listGoods").getJSONObject(i).get("discount").toString())
-//                                        + " WHERE nmId = '" + jsonObject.getJSONArray("listGoods").getJSONObject(i).get("nmID").toString() + "'").executeUpdate();
-//
-//                                coincidence = true;
-//                            }
-//                        }
-//                        if (!coincidence) {
-//                            Product product = new Product("",
-//                                    jsonObject.getJSONArray("listGoods").getJSONObject(i).get("nmID").toString(),
-//                                    "",
-//                                    parseInt(jsonObject.getJSONArray("listGoods").getJSONObject(i).getJSONArray("sizes").getJSONObject(0).get("price").toString()),
-//                                    parseInt(jsonObject.getJSONArray("listGoods").getJSONObject(i).get("discount").toString()),
-//                                    "wb", "", "", user);
-//                            session.save(product);
-//                        }
-//                    }
-//                }
-//            }
         } catch (IOException e) {
             e.printStackTrace();
             e.getMessage();
+        }
+    }
+
+    private void search() {
+        URL generetedURL = null;
+        String response = null;
+
+        String answer = "Бесплатные окна: ";
+
+        for (Warehouse w: warehouseArrayList) {
+            generetedURL = URLRequestResponse.generateURL("wb","coefficients", "", String.valueOf(w.getId()));
+            String s = "\n" + w.getName();
+            boolean coincidence = false;
+            try {
+                response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
+//                System.out.println(response);
+                if (!response.equals("{\"errors\":[\"(api-new) too many requests\"]}")) {
+                JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
+                for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
+                    if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0 & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
+                        s = s + "\n"
+                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
+                                + ": "
+                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"))
+                                + "\n";
+                        coincidence = true;
+                    }
+                }
+                if (coincidence) {
+                    answer = answer + s;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                e.getMessage();
+            }
+        }
+
+        if (!prevAnswer.equals(answer)) {
+            prevAnswer = answer;
+            bot.setAnswer(prevAnswer);
         }
     }
 }
