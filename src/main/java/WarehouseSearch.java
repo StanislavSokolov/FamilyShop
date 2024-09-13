@@ -69,7 +69,8 @@ public class WarehouseSearch extends Thread {
         String response = null;
         generetedURL = URLRequestResponse.generateURL("wb","warehouses", "", "");
         try {
-            response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
+            response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken(""));
+//            response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
             System.out.println(response);
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,7 +82,7 @@ public class WarehouseSearch extends Thread {
         URL generetedURL = null;
         String response = null;
 
-        String answer = "Бесплатные окна: ";
+        String answer = "Бесплатные окна: " + "\n";
 
         for (Warehouse w: warehouseArrayList) {
             generetedURL = URLRequestResponse.generateURL("wb","coefficients", "", String.valueOf(w.getId()));
@@ -97,8 +98,8 @@ public class WarehouseSearch extends Thread {
                         s = s + "\n"
                                 + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
                                 + ": "
-                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"))
-                                + "\n";
+                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"));
+
                         coincidence = true;
                     }
                 }
@@ -114,7 +115,7 @@ public class WarehouseSearch extends Thread {
 
         if (!prevAnswer.equals(answer)) {
             prevAnswer = answer;
-            bot.setAnswer(prevAnswer);
+            if (!prevAnswer.equals("Бесплатные окна: " + "\n")) bot.setAnswer(prevAnswer);
         }
     }
 }
