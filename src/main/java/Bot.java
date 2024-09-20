@@ -54,7 +54,10 @@ public final class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        setAnswer("dsfv");
+        Message msg = update.getMessage();
+        Long chatId = msg.getChatId();
+        String userName = getUserName(msg);
+        checkChatId(chatId, userName);
     }
     // Проверяем идентификатор чата в базе данных
     // Если пользователь новый, то добавляем запись в базе данных
@@ -87,7 +90,9 @@ public final class Bot extends TelegramLongPollingBot {
     }
 
     public void setAnswer(String result) {
-        setAnswer((long) 419946022, "xx", result);
+        ArrayList<Person> personArrayList = getListUsers();
+        for (Person p: personArrayList)
+            setAnswer((long) p.getChatId(), p.getUserName(), result);
     }
 
     /**

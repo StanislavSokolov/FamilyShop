@@ -8,11 +8,11 @@ public class WarehouseSearch extends Thread {
 
     static final int ELECTROSTAL = 120762;
     static final String ELECTROSTAL_DESCRIPTION = "ID: " + ELECTROSTAL + ", name: Электросталь, address: Московская область, Электросталь, посёлок Случайный, территория Массив 3, 5";
-    static final String ELECTROSTAL_DESCRIPTION_1 = "Электросталь, Московская область, посёлок Случайный";
+    static final String ELECTROSTAL_DESCRIPTION_1 = "Электросталь";
 
     static final int TULA = 206348;
     static final String TULA_DESCRIPTION = "ID: " + TULA + ", name: Тула, address: Тульская область, муниципальное образование Алексин, 1";
-    static final String TULA_DESCRIPTION_1 = "Тула, Тульская область, муниципальное образование Алексин";
+    static final String TULA_DESCRIPTION_1 = "Тула (Алексин)";
 
     static final int NEVINOMISK = 208277;
     static final String NEVINOMISK_DESCRIPTION = "ID: " + NEVINOMISK + ", name: Невинномысск, address: ул. Тимирязева 16";
@@ -24,11 +24,11 @@ public class WarehouseSearch extends Thread {
 
     static final int KOLEDINO = 507;
     static final String KOLEDINO_DESCRIPTION = "ID: " + KOLEDINO + ", name: Коледино, address: дер. Коледино, ул. Троицкая, 20";
-    static final String KOLEDINO_DESCRIPTION_1 = "Коледино, дер. Коледино";
+    static final String KOLEDINO_DESCRIPTION_1 = "Коледино";
 
     static final int KAZAN = 117986;
     static final String KAZAN_DESCRIPTION = "ID :" + KAZAN + "name: Казань, address: Республика Татарстан, Зеленодольск, промышленный парк Зеленодольск, 20";
-    static final String KAZAN_DESCRIPTION_1 = "Казань, Республика Татарстан, Зеленодольск";
+    static final String KAZAN_DESCRIPTION_1 = "Казань";
 
     String prevAnswer = "Бесплатные окна: ";
 
@@ -41,7 +41,7 @@ public class WarehouseSearch extends Thread {
 
         warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL));
         warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA));
-        warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK));
+        //warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK));
         warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR));
         warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO));
         warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN));
@@ -114,8 +114,10 @@ public class WarehouseSearch extends Thread {
         }
 
         if (!prevAnswer.equals(answer)) {
-            prevAnswer = answer;
-            if (!prevAnswer.equals("Бесплатные окна: " + "\n")) bot.setAnswer(prevAnswer);
+            if (!answer.equals("Бесплатные окна: " + "\n")) {
+                prevAnswer = answer;
+                bot.setAnswer(prevAnswer);
+            }
         }
     }
 }
