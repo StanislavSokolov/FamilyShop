@@ -4,11 +4,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
@@ -57,23 +60,126 @@ public final class Bot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             Message msg = update.getMessage();
             String text = msg.getText();
-            Long chatId = msg.getChatId();
+            String chatId = msg.getChatId().toString();
             if (text.equals("/setting")) {
-
+                setting(chatId);
             }
         }
-        if (update.hasMessage()) {
-            Message msg = update.getMessage();
-            String text = msg.getText();
-            Long chatId = msg.getChatId();
-            if (text.equals("/setting")) {
-
+        else if (update.hasCallbackQuery()) {
+            String text = update.getCallbackQuery().getData();
+            String chatId = update.getCallbackQuery().getMessage().getChatId().toString();
+            if (text.equals("add")) {
+                add(chatId);
             }
-        }
-        if (update.hasCallbackQuery()) {
-
+            if (text.equals("remove")) {
+                remove(chatId);
+            }
+            if (text.equals("back")) {
+                setting(chatId);
+            }
+            System.out.println(text);
+            for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
+                if (text.equals(wh.getColumn())) {
+                    update(chatId, wh.getColumn());
+                }
+            }
         }
     }
+
+    private void update(String chatId, String column) {
+        SQL.update(chatId, column, SQL.getWarehouseValue(chatId, column));
+        setting(chatId);
+        System.out.println("Update " + column);
+    }
+
+    // Шаг "Выбор действия"
+    private void setting(String chatId) {
+        SendMessage sendMessage = new SendMessage();
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardButton inlineKeyboardButtonAdd = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButtonRemove = new InlineKeyboardButton();
+        inlineKeyboardButtonAdd.setText("Добавить");
+//        inlineKeyboardButtonAdd.setUrl("https://core.telegram.org/bots/api#answerwebappquery");
+        inlineKeyboardButtonAdd.setCallbackData("add");
+        inlineKeyboardButtonRemove.setText("Убрать");
+        inlineKeyboardButtonRemove.setCallbackData("remove");
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(inlineKeyboardButtonAdd);
+        keyboardButtonsRow.add(inlineKeyboardButtonRemove);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        sendMessage.setChatId(chatId);
+        String text = "Список складов для отслеживания:" + "\n" + "\n" + SQL.getListWarehouses(chatId) + "\n" + "Выберите действие:";
+        sendMessage.setText(text);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        sendMessage.enableHtml(true);
+        setAnswer(sendMessage);
+    }
+
+    private void add(String chatId) {
+        SendMessage sendMessage = new SendMessage();
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        ArrayList<Warehouse> warehousesArrayList = SQL.getListWarehousesToAdd(chatId);
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        String text = "";
+        if (!warehousesArrayList.isEmpty()) {
+            for (Warehouse wh: warehousesArrayList) {
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                inlineKeyboardButton.setText(wh.getName());
+                inlineKeyboardButton.setCallbackData(wh.getColumn());
+                keyboardButtonsRow.add(inlineKeyboardButton);
+            }
+            text = "Выберите склад для добавления";
+        } else {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText("Назад");
+            inlineKeyboardButton.setCallbackData("back");
+            keyboardButtonsRow.add(inlineKeyboardButton);
+            text = "Все необходимые склады уже добавлены для отслеживания";
+        }
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(text);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        sendMessage.enableHtml(true);
+        setAnswer(sendMessage);
+    }
+
+    private void remove(String chatId) {
+        SendMessage sendMessage = new SendMessage();
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        ArrayList<Warehouse> warehousesArrayList = SQL.getListWarehousesToRemove(chatId);
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        String text = "";
+        if (!warehousesArrayList.isEmpty()) {
+            for (Warehouse wh: warehousesArrayList) {
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                inlineKeyboardButton.setText(wh.getName());
+                inlineKeyboardButton.setCallbackData(wh.getColumn());
+                keyboardButtonsRow.add(inlineKeyboardButton);
+            }
+            text = "Выберите склад для удаления";
+        } else {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText("Назад");
+            inlineKeyboardButton.setCallbackData("back");
+            keyboardButtonsRow.add(inlineKeyboardButton);
+            text = "Все склады удалены для отслеживания";
+        }
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(text);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        sendMessage.enableHtml(true);
+        setAnswer(sendMessage);
+    }
+
+
     // Проверяем идентификатор чата в базе данных
     // Если пользователь новый, то добавляем запись в базе данных
     private void checkChatId(Long chatId, String userName){
