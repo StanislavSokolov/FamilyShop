@@ -54,7 +54,25 @@ public final class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        setAnswer("dsfv");
+        if (update.hasMessage()) {
+            Message msg = update.getMessage();
+            String text = msg.getText();
+            Long chatId = msg.getChatId();
+            if (text.equals("/setting")) {
+
+            }
+        }
+        if (update.hasMessage()) {
+            Message msg = update.getMessage();
+            String text = msg.getText();
+            Long chatId = msg.getChatId();
+            if (text.equals("/setting")) {
+
+            }
+        }
+        if (update.hasCallbackQuery()) {
+
+        }
     }
     // Проверяем идентификатор чата в базе данных
     // Если пользователь новый, то добавляем запись в базе данных
