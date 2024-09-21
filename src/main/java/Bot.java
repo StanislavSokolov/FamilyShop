@@ -61,8 +61,13 @@ public final class Bot extends TelegramLongPollingBot {
             Message msg = update.getMessage();
             String text = msg.getText();
             String chatId = msg.getChatId().toString();
+            String userName = getUserName(msg);
+            checkChatId(msg.getChatId(), userName);
             if (text.equals("/setting")) {
                 setting(chatId);
+            }
+            if (text.equals("/start")) {
+                setAnswer(msg.getChatId(), userName, "Добро пожаловать в сервис поиска бесплатных окон для поставок на склады Wildberries! Ты можешь сам настроить список складов, а я буду присылать тебе уведомления, если найду там свободные окна. Чтобы посмотреть и настроить список складов нажми на кнопку \"Menu\" и выбери раздел \"Настройки\".");
             }
         }
         else if (update.hasCallbackQuery()) {
@@ -225,23 +230,30 @@ public final class Bot extends TelegramLongPollingBot {
             setAnswer((long) p.getChatId(), p.getUserName(), result);
     }
 
+    public void setAnswer(int chatId, String result) {
+        setAnswer((long) chatId, "", result);
+    }
+
     public void setAnswer(ArrayList<Warehouse> warehouseArrayList) {
-        ArrayList<String> stringArrayList = SQL.getListWarehouses("419946022");
-        if (!stringArrayList.isEmpty()) {
-            String s = "Бесплатные окна: " + "\n";
-            for (String st: stringArrayList) {
-                for (Warehouse wh: warehouseArrayList) {
-                    if (st.equals(wh.getName())) {
-                        if (!wh.getDates().isEmpty()) {
-                            s = s + "\n" + wh.getName();
-                            for (String day: wh.getDates()) {
-                                s = s + "\n" + day;
+        ArrayList<Person> personArrayList = getListUsers();
+        for (Person p: personArrayList) {
+            ArrayList<String> stringArrayList = SQL.getListWarehouses(String.valueOf(p.getChatId()));
+            if (!stringArrayList.isEmpty()) {
+                String s = "Бесплатные окна: " + "\n";
+                for (String st: stringArrayList) {
+                    for (Warehouse wh: warehouseArrayList) {
+                        if (st.equals(wh.getName())) {
+                            if (!wh.getDates().isEmpty()) {
+                                s = s + "\n" + wh.getName();
+                                for (String day: wh.getDates()) {
+                                    s = s + "\n" + day;
+                                }
                             }
                         }
                     }
                 }
+                if (!s.equals("Бесплатные окна: " + "\n")) setAnswer((long) p.getChatId(), "xx", s);
             }
-            if (!s.equals("Бесплатные окна: " + "\n")) setAnswer((long) 419946022, "xx", s);
         }
     }
 
