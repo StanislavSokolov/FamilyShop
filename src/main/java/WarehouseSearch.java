@@ -9,42 +9,54 @@ public class WarehouseSearch extends Thread {
     static final int ELECTROSTAL = 120762;
     static final String ELECTROSTAL_DESCRIPTION = "ID: " + ELECTROSTAL + ", name: Электросталь, address: Московская область, Электросталь, посёлок Случайный, территория Массив 3, 5";
     static final String ELECTROSTAL_DESCRIPTION_1 = "Электросталь";
+    static final String ELECTROSTAL_DESCRIPTION_2 = "ELECTROSTAL";
 
     static final int TULA = 206348;
     static final String TULA_DESCRIPTION = "ID: " + TULA + ", name: Тула, address: Тульская область, муниципальное образование Алексин, 1";
-    static final String TULA_DESCRIPTION_1 = "Тула (Алексин)";
+    static final String TULA_DESCRIPTION_1 = "Тула";
+    static final String TULA_DESCRIPTION_2 = "TULA";
 
     static final int NEVINOMISK = 208277;
     static final String NEVINOMISK_DESCRIPTION = "ID: " + NEVINOMISK + ", name: Невинномысск, address: ул. Тимирязева 16";
     static final String NEVINOMISK_DESCRIPTION_1 = "Невинномысск";
+    static final String NEVINOMISK_DESCRIPTION_2 = "NEVINOMISK";
 
     static final int KRASNODAR = 130744;
     static final String KRASNODAR_DESCRIPTION = "ID: " + KRASNODAR + ", name: Краснодар (Тихорецкая), address: ул. Тихорецкая, 40с1";
-    static final String KRASNODAR_DESCRIPTION_1 = "Краснодар (Тихорецкая)";
+    static final String KRASNODAR_DESCRIPTION_1 = "Краснодар";
+    static final String KRASNODAR_DESCRIPTION_2 = "KRASNODAR";
 
     static final int KOLEDINO = 507;
     static final String KOLEDINO_DESCRIPTION = "ID: " + KOLEDINO + ", name: Коледино, address: дер. Коледино, ул. Троицкая, 20";
     static final String KOLEDINO_DESCRIPTION_1 = "Коледино";
+    static final String KOLEDINO_DESCRIPTION_2 = "KOLEDINO";
 
     static final int KAZAN = 117986;
     static final String KAZAN_DESCRIPTION = "ID :" + KAZAN + "name: Казань, address: Республика Татарстан, Зеленодольск, промышленный парк Зеленодольск, 20";
     static final String KAZAN_DESCRIPTION_1 = "Казань";
+    static final String KAZAN_DESCRIPTION_2 = "KAZAN";
+  
+    private static ArrayList<Warehouse> warehouseArrayList;
 
     String prevAnswer = "Бесплатные окна: ";
 
-    ArrayList<Warehouse> warehouseArrayList;
+//    ArrayList<Warehouse> warehouseArrayList;
+
+    public static ArrayList<Warehouse> getWarehouseArrayList() {
+        return warehouseArrayList;
+    }
 
     Bot bot;
 
     public WarehouseSearch(Bot bot) {
         warehouseArrayList = new ArrayList<>();
 
-        warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL));
-        warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA));
-        //warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK));
-        warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR));
-        warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO));
-        warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN));
+        warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL, ELECTROSTAL_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA, TULA_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK, NEVINOMISK_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR, KRASNODAR_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO, KOLEDINO_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN, KAZAN_DESCRIPTION_2));
 
         this.bot = bot;
     }
@@ -54,13 +66,14 @@ public class WarehouseSearch extends Thread {
 
         super.run();
         while (true) {
-            try {
-                search();
-                sleep(65000);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            search();
+//            try {
+//                search();
+//                sleep(650000);
+//
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -82,42 +95,37 @@ public class WarehouseSearch extends Thread {
         URL generetedURL = null;
         String response = null;
 
-        String answer = "Бесплатные окна: " + "\n";
-
-        for (Warehouse w: warehouseArrayList) {
-            generetedURL = URLRequestResponse.generateURL("wb","coefficients", "", String.valueOf(w.getId()));
-            String s = "\n" + w.getName();
-            boolean coincidence = false;
+        for (Warehouse wh: warehouseArrayList) {
+            wh.setDates(new ArrayList<>());
+            generetedURL = URLRequestResponse.generateURL("wb","coefficients", "", String.valueOf(wh.getId()));
+//            boolean coincidence = false;
             try {
                 response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
 //                System.out.println(response);
                 if (!response.equals("{\"errors\":[\"(api-new) too many requests\"]}")) {
-                JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
-                for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
-                    if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0 & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
-                        s = s + "\n"
-                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
-                                + ": "
-                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"));
-
-                        coincidence = true;
+                    JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
+                    for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
+                        if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0 & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
+                            wh.getDates().add(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
+                                    + ": "
+                                    + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName")));
+//                            coincidence = true;
+                        }
                     }
-                }
-                if (coincidence) {
-                    answer = answer + s;
-                    }
+//                    if (coincidence) {
+//                        answer = answer + s;
+//                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
                 e.getMessage();
             }
-        }
-
-        if (!prevAnswer.equals(answer)) {
-            if (!answer.equals("Бесплатные окна: " + "\n")) {
-                prevAnswer = answer;
-                bot.setAnswer(prevAnswer);
+            try {
+                sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+        bot.setAnswer(warehouseArrayList);
     }
 }

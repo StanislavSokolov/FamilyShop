@@ -28,7 +28,7 @@ public class SQL {
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
             props.load(in);
         }
         String url = props.getProperty("url");
@@ -92,11 +92,11 @@ public class SQL {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             try (Connection conn = getConnection()) {
                 Statement statement = conn.createStatement();
-//                ResultSet resultSet = statement.executeQuery("SELECT * FROM user where nameShopWB = '22'");
-                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop where WBstats = '22'");
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM user where nameShopWB = '22'");
+//                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop where WBstats = '22'");
                 while (resultSet.next()) {
-//                    token = resultSet.getString("tokenStandartWB");
-                    token = resultSet.getString("WB");
+                    token = resultSet.getString("tokenStandartWB");
+//                    token = resultSet.getString("WB");
                 }
             }
         } catch (Exception ex) {
@@ -410,6 +410,116 @@ public class SQL {
             System.out.println(i.getCountSales() + " " + i.getCountOrders() + " " + i.getCount());
         }
         return items;
+    }
+
+    public static ArrayList<String> getListWarehouses(String chatId) {
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        String answer = "";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
+                while (resultSet.next()) {
+                    for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
+                        if (resultSet.getInt(wh.getColumn()) != -1) stringArrayList.add(wh.getName());
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return stringArrayList;
+    }
+
+    public static Person getPerson(String chatId) {
+        Person p = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
+                while (resultSet.next()) {
+                    p = new Person("", Integer.parseInt(chatId), 
+                            resultSet.getInt("ELECTROSTAL"),
+                            resultSet.getInt("TULA"),
+                            resultSet.getInt("NEVINOMISK"),
+                            resultSet.getInt("KRASNODAR"),
+                            resultSet.getInt("KOLEDINO"),
+                            resultSet.getInt("KAZAN"));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return p;
+    }
+
+    public static ArrayList<Warehouse> getListWarehousesToAdd(String chatId) {
+        ArrayList<Warehouse> warehousesArrayList = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
+                while (resultSet.next()) {
+                    for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
+                        if (resultSet.getInt(wh.getColumn()) == -1) warehousesArrayList.add(new Warehouse(wh.getName(), wh.getId(), wh.getColumn()));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return warehousesArrayList;
+    }
+
+    public static ArrayList<Warehouse> getListWarehousesToRemove(String chatId) {
+        ArrayList<Warehouse> warehousesArrayList = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
+                while (resultSet.next()) {
+                    for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
+                        if (resultSet.getInt(wh.getColumn()) == 0) warehousesArrayList.add(new Warehouse(wh.getName(), wh.getId(), wh.getColumn()));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return warehousesArrayList;
+    }
+
+    public static int getWarehouseValue(String chatId, String column) {
+        int result = 0;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
+                while (resultSet.next()) {
+                    if (resultSet.getInt(column) == 0) result = -1;
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return result;
+    }
+
+    public static void update(String chatId, String column, int warehouseValue) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                statement.executeUpdate("UPDATE tokenshop SET " + column + " = " + warehouseValue + " WHERE ChatId = " + chatId);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 }
 
