@@ -35,6 +35,7 @@ public class WarehouseSearch extends Thread {
     static final String KAZAN_DESCRIPTION = "ID :" + KAZAN + "name: Казань, address: Республика Татарстан, Зеленодольск, промышленный парк Зеленодольск, 20";
     static final String KAZAN_DESCRIPTION_1 = "Казань";
     static final String KAZAN_DESCRIPTION_2 = "KAZAN";
+  
     private static ArrayList<Warehouse> warehouseArrayList;
 
     String prevAnswer = "Бесплатные окна: ";
@@ -121,7 +122,6 @@ public class WarehouseSearch extends Thread {
             }
             try {
                 sleep(10000);
-
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

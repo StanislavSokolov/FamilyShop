@@ -220,7 +220,9 @@ public final class Bot extends TelegramLongPollingBot {
     }
 
     public void setAnswer(String result) {
-        setAnswer((long) 419946022, "xx", result);
+        ArrayList<Person> personArrayList = getListUsers();
+        for (Person p: personArrayList)
+            setAnswer((long) p.getChatId(), p.getUserName(), result);
     }
 
     public void setAnswer(ArrayList<Warehouse> warehouseArrayList) {
