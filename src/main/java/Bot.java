@@ -89,7 +89,6 @@ public final class Bot extends TelegramLongPollingBot {
     private void update(String chatId, String column) {
         SQL.update(chatId, column, SQL.getWarehouseValue(chatId, column));
         setting(chatId);
-        System.out.println("Update " + column);
     }
 
     // Шаг "Выбор действия"
@@ -126,26 +125,28 @@ public final class Bot extends TelegramLongPollingBot {
     private void add(String chatId) {
         SendMessage sendMessage = new SendMessage();
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         ArrayList<Warehouse> warehousesArrayList = SQL.getListWarehousesToAdd(chatId);
-        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         String text = "";
         if (!warehousesArrayList.isEmpty()) {
             for (Warehouse wh: warehousesArrayList) {
                 InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                 inlineKeyboardButton.setText(wh.getName());
                 inlineKeyboardButton.setCallbackData(wh.getColumn());
+                List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
                 keyboardButtonsRow.add(inlineKeyboardButton);
+                rowList.add(keyboardButtonsRow);
             }
             text = "Выберите склад для добавления";
         } else {
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
             inlineKeyboardButton.setText("Назад");
             inlineKeyboardButton.setCallbackData("back");
+            List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
             keyboardButtonsRow.add(inlineKeyboardButton);
+            rowList.add(keyboardButtonsRow);
             text = "Все необходимые склады уже добавлены для отслеживания";
         }
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow);
         inlineKeyboardMarkup.setKeyboard(rowList);
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);
@@ -157,26 +158,28 @@ public final class Bot extends TelegramLongPollingBot {
     private void remove(String chatId) {
         SendMessage sendMessage = new SendMessage();
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         ArrayList<Warehouse> warehousesArrayList = SQL.getListWarehousesToRemove(chatId);
-        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         String text = "";
         if (!warehousesArrayList.isEmpty()) {
             for (Warehouse wh: warehousesArrayList) {
                 InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                 inlineKeyboardButton.setText(wh.getName());
                 inlineKeyboardButton.setCallbackData(wh.getColumn());
+                List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
                 keyboardButtonsRow.add(inlineKeyboardButton);
+                rowList.add(keyboardButtonsRow);
             }
             text = "Выберите склад для удаления";
         } else {
             InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
             inlineKeyboardButton.setText("Назад");
             inlineKeyboardButton.setCallbackData("back");
+            List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
             keyboardButtonsRow.add(inlineKeyboardButton);
+            rowList.add(keyboardButtonsRow);
             text = "Все склады удалены для отслеживания";
         }
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(keyboardButtonsRow);
         inlineKeyboardMarkup.setKeyboard(rowList);
         sendMessage.setChatId(chatId);
         sendMessage.setText(text);

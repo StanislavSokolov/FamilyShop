@@ -100,6 +100,7 @@ public class WarehouseSearch extends Thread {
 //            boolean coincidence = false;
             try {
                 response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
+//                System.out.println(response);
                 if (!response.equals("{\"errors\":[\"(api-new) too many requests\"]}")) {
                     JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
                     for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
