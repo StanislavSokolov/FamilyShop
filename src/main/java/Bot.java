@@ -110,7 +110,13 @@ public final class Bot extends TelegramLongPollingBot {
         rowList.add(keyboardButtonsRow);
         inlineKeyboardMarkup.setKeyboard(rowList);
         sendMessage.setChatId(chatId);
-        String text = "Список складов для отслеживания:" + "\n" + "\n" + SQL.getListWarehouses(chatId) + "\n" + "Выберите действие:";
+        ArrayList<String> stringArrayList = SQL.getListWarehouses(chatId);
+        String text = "В вашем списке нет складов для отслеживания. Добавьте их." + "\n" + "\n" + "Выберите действие:";
+        if (!stringArrayList.isEmpty()) {
+            text = "Список складов для отслеживания:" + "\n";
+            for (String s: stringArrayList) text = text + "\n" + s;
+            text = text + "\n" + "\n" + "Выберите действие:";
+        }
         sendMessage.setText(text);
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
         sendMessage.enableHtml(true);
@@ -212,6 +218,26 @@ public final class Bot extends TelegramLongPollingBot {
 
     public void setAnswer(String result) {
         setAnswer((long) 419946022, "xx", result);
+    }
+
+    public void setAnswer(ArrayList<Warehouse> warehouseArrayList) {
+        ArrayList<String> stringArrayList = SQL.getListWarehouses("419946022");
+        if (!stringArrayList.isEmpty()) {
+            String s = "Бесплатные окна: " + "\n";
+            for (String st: stringArrayList) {
+                for (Warehouse wh: warehouseArrayList) {
+                    if (st.equals(wh.getName())) {
+                        if (!wh.getDates().isEmpty()) {
+                            s = s + "\n" + wh.getName();
+                            for (String day: wh.getDates()) {
+                                s = s + "\n" + day;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!s.equals("Бесплатные окна: " + "\n")) setAnswer((long) 419946022, "xx", s);
+        }
     }
 
     /**

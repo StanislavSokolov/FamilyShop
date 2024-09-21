@@ -412,7 +412,8 @@ public class SQL {
         return items;
     }
 
-    public static String getListWarehouses(String chatId) {
+    public static ArrayList<String> getListWarehouses(String chatId) {
+        ArrayList<String> stringArrayList = new ArrayList<>();
         String answer = "";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -421,14 +422,14 @@ public class SQL {
                 ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
                 while (resultSet.next()) {
                     for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
-                        if (resultSet.getInt(wh.getColumn()) != -1) answer = answer + " " + wh.getName() + "\n";
+                        if (resultSet.getInt(wh.getColumn()) != -1) stringArrayList.add(wh.getName());
                     }
                 }
             }
         } catch (Exception ex) {
             System.out.println(ex);
         }
-        return answer;
+        return stringArrayList;
     }
 
     public static Person getPerson(String chatId) {

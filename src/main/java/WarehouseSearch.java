@@ -65,13 +65,14 @@ public class WarehouseSearch extends Thread {
 
         super.run();
         while (true) {
-            try {
-                search();
-                sleep(650000);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            search();
+//            try {
+//                search();
+//                sleep(650000);
+//
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -93,40 +94,37 @@ public class WarehouseSearch extends Thread {
         URL generetedURL = null;
         String response = null;
 
-        String answer = "Бесплатные окна: " + "\n";
-
-        for (Warehouse w: warehouseArrayList) {
-            generetedURL = URLRequestResponse.generateURL("wb","coefficients", "", String.valueOf(w.getId()));
-            String s = "\n" + w.getName();
-            boolean coincidence = false;
+        for (Warehouse wh: warehouseArrayList) {
+            wh.setDates(new ArrayList<>());
+            generetedURL = URLRequestResponse.generateURL("wb","coefficients", "", String.valueOf(wh.getId()));
+//            boolean coincidence = false;
             try {
                 response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
-//                System.out.println(response);
                 if (!response.equals("{\"errors\":[\"(api-new) too many requests\"]}")) {
-                JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
-                for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
-                    if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0 & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
-                        s = s + "\n"
-                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
-                                + ": "
-                                + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"));
-
-                        coincidence = true;
+                    JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
+                    for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
+                        if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0 & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
+                            wh.getDates().add(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
+                                    + ": "
+                                    + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName")));
+//                            coincidence = true;
+                        }
                     }
-                }
-                if (coincidence) {
-                    answer = answer + s;
-                    }
+//                    if (coincidence) {
+//                        answer = answer + s;
+//                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
                 e.getMessage();
             }
-        }
+            try {
+                sleep(10000);
 
-        if (!prevAnswer.equals(answer)) {
-            prevAnswer = answer;
-            if (!prevAnswer.equals("Бесплатные окна: " + "\n")) bot.setAnswer(prevAnswer);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        bot.setAnswer(warehouseArrayList);
     }
 }
