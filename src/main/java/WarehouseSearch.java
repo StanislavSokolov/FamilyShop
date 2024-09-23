@@ -66,6 +66,7 @@ public class WarehouseSearch extends Thread {
 
         super.run();
         while (true) {
+            prepare();
             search();
 //            try {
 //                search();
@@ -75,6 +76,10 @@ public class WarehouseSearch extends Thread {
 //                e.printStackTrace();
 //            }
         }
+    }
+
+    private void prepare() {
+
     }
 
     private void warehouses() {

@@ -7,6 +7,7 @@ import java.io.IOException;
 
 public class FamilyShop {
     public static void main(String[] args) {
+        SQL.createBD();
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             Bot bot = new Bot(BotSettings.getProperties("botName"), BotSettings.getProperties("botToken"));
@@ -16,7 +17,5 @@ public class FamilyShop {
         } catch (TelegramApiException | IOException e) {
             e.printStackTrace();
         }
-
-        SQL.createBD();
     }
 }

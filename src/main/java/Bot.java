@@ -22,27 +22,22 @@ public final class Bot extends TelegramLongPollingBot {
 
     //Настройки по умолчанию
     static Settings defaultSettings;
-    //
-    private URL generetedURL;
-    String response;
 
     /**
      * Настройки файла для разных пользователей. Ключ - уникальный id чата
      */
 
-    private static Map<Long, Settings> userSettings;
-    private Long chatId;
-    private String userName;
-    private String text;
-
-    // Получая данные с нажатой кнопки пишем их в data
-    private String data;
+    private static Map<Long, String> userSettings;
 
     public Bot(String botName, String botToken) {
         super();
         this.BOT_NAME = botName;
         this.BOT_TOKEN = botToken;
         userSettings = new HashMap<>();
+        ArrayList<Person> personArrayList = SQL.getListUsers();
+        for (Person p: personArrayList) {
+            userSettings.put((long) p.getChatId(), "Бесплатные окна: " + "\n");
+        }
     }
 
     @Override
@@ -63,6 +58,7 @@ public final class Bot extends TelegramLongPollingBot {
             String chatId = msg.getChatId().toString();
             String userName = getUserName(msg);
             checkChatId(msg.getChatId(), userName);
+            userSettings.put(msg.getChatId(), "Бесплатные окна: " + "\n");
             if (text.equals("/setting")) {
                 setting(chatId);
             }
@@ -252,7 +248,12 @@ public final class Bot extends TelegramLongPollingBot {
                         }
                     }
                 }
-                if (!s.equals("Бесплатные окна: " + "\n")) setAnswer((long) p.getChatId(), "xx", s);
+                if (!userSettings.get((long) p.getChatId()).equals("Бесплатные окна: " + "\n")) {
+                    if (!userSettings.get((long) p.getChatId()).equals(s)) {
+                        userSettings.put((long) p.getChatId(), s);
+                        setAnswer((long) p.getChatId(), "xx", s);
+                    }
+                }
             }
         }
     }
@@ -260,13 +261,13 @@ public final class Bot extends TelegramLongPollingBot {
     /**
      * Получение настроек по id чата. Если ранее для этого чата в ходе сеанса работы бота настройки не были установлены, используются настройки по умолчанию
      */
-    public static Settings getUserSettings(Long chatId) {
-        Settings settings = userSettings.get(chatId);
-        if (settings == null) {
-            return defaultSettings;
-        }
-        return settings;
-    }
+//    public static Settings getUserSettings(Long chatId) {
+//        Settings settings = userSettings.get(chatId);
+//        if (settings == null) {
+//            return defaultSettings;
+//        }
+//        return settings;
+//    }
 
     /**
      * Формирование имени пользователя
