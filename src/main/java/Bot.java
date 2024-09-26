@@ -36,7 +36,7 @@ public final class Bot extends TelegramLongPollingBot {
         userSettings = new HashMap<>();
         ArrayList<Person> personArrayList = SQL.getListUsers();
         for (Person p: personArrayList) {
-            userSettings.put((long) p.getChatId(), "Бесплатные окна: " + "\n");
+            userSettings.put((long) p.getChatId(), "");
         }
     }
 
@@ -231,6 +231,7 @@ public final class Bot extends TelegramLongPollingBot {
     }
 
     public void setAnswer(ArrayList<Warehouse> warehouseArrayList) {
+        System.out.println("scd");
         ArrayList<Person> personArrayList = getListUsers();
         for (Person p: personArrayList) {
             ArrayList<String> stringArrayList = SQL.getListWarehouses(String.valueOf(p.getChatId()));
@@ -248,7 +249,9 @@ public final class Bot extends TelegramLongPollingBot {
                         }
                     }
                 }
+                System.out.println("s");
                 if (!userSettings.get((long) p.getChatId()).equals("Бесплатные окна: " + "\n")) {
+                    System.out.println(s);
                     if (!userSettings.get((long) p.getChatId()).equals(s)) {
                         userSettings.put((long) p.getChatId(), s);
                         setAnswer((long) p.getChatId(), "xx", s);

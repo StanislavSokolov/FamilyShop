@@ -110,10 +110,17 @@ public class WarehouseSearch extends Thread {
                 if (!response.equals("{\"errors\":[\"(api-new) too many requests\"]}")) {
                     JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
                     for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
-                        if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0 & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
+                        if (((Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0) ||
+                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 1) ||
+                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 2)) & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
+                            String coefficient = "Бесплатно";
+                            if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) != 0) coefficient = jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString();
                             wh.getDates().add(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
                                     + ": "
-                                    + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName")));
+                                    + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"))
+                                    + " ("
+                                    + coefficient
+                                    + ")");
 //                            coincidence = true;
                         }
                     }
