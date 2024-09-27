@@ -87,8 +87,8 @@ public class WarehouseSearch extends Thread {
         String response = null;
         generetedURL = URLRequestResponse.generateURL("wb","warehouses", "", "");
         try {
-            response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken(""));
-//            response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
+//            response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken(""));
+            response = URLRequestResponse.getResponseFromURL(generetedURL, SQL.getToken("SOKOL0VE"));
             System.out.println(response);
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,7 +114,7 @@ public class WarehouseSearch extends Thread {
                                 (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 1) ||
                                 (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 2)) & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
                             String coefficient = "Бесплатно";
-                            if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) != 0) coefficient = jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString();
+                            if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) != 0) coefficient = "x" + jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString();
                             wh.getDates().add(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
                                     + ": "
                                     + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"))
@@ -133,7 +133,7 @@ public class WarehouseSearch extends Thread {
                 e.getMessage();
             }
             try {
-                sleep(10000);
+                sleep(7000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

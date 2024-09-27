@@ -57,8 +57,9 @@ public final class Bot extends TelegramLongPollingBot {
             String text = msg.getText();
             String chatId = msg.getChatId().toString();
             String userName = getUserName(msg);
-            checkChatId(msg.getChatId(), userName);
-            userSettings.put(msg.getChatId(), "Бесплатные окна: " + "\n");
+            if (!checkChatId(msg.getChatId(), userName)) {
+                userSettings.put(msg.getChatId(), "");
+            }
             if (text.equals("/setting")) {
                 setting(chatId);
             }
@@ -78,7 +79,6 @@ public final class Bot extends TelegramLongPollingBot {
             if (text.equals("back")) {
                 setting(chatId);
             }
-            System.out.println(text);
             for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
                 if (text.equals(wh.getColumn())) {
                     update(chatId, wh.getColumn());
@@ -192,8 +192,14 @@ public final class Bot extends TelegramLongPollingBot {
 
     // Проверяем идентификатор чата в базе данных
     // Если пользователь новый, то добавляем запись в базе данных
-    private void checkChatId(Long chatId, String userName){
-        SQL.checkId(chatId, userName);
+    private boolean checkChatId(Long chatId, String userName){
+        return SQL.checkId(chatId, userName);
+    }
+
+    // Проверяем идентификатор чата в базе данных
+    // Если пользователь новый, то добавляем запись в базе данных
+    private void getUser(Long chatId, String userName){
+        SQL.getUser(chatId, userName);
     }
 
     // Получаем список пользователей из базы данных
@@ -231,17 +237,16 @@ public final class Bot extends TelegramLongPollingBot {
     }
 
     public void setAnswer(ArrayList<Warehouse> warehouseArrayList) {
-        System.out.println("scd");
         ArrayList<Person> personArrayList = getListUsers();
         for (Person p: personArrayList) {
             ArrayList<String> stringArrayList = SQL.getListWarehouses(String.valueOf(p.getChatId()));
             if (!stringArrayList.isEmpty()) {
-                String s = "Бесплатные окна: " + "\n";
+                String s = "";
                 for (String st: stringArrayList) {
                     for (Warehouse wh: warehouseArrayList) {
                         if (st.equals(wh.getName())) {
                             if (!wh.getDates().isEmpty()) {
-                                s = s + "\n" + wh.getName();
+                                s = s + "\n" + "\n" + wh.getName();
                                 for (String day: wh.getDates()) {
                                     s = s + "\n" + day;
                                 }
@@ -249,10 +254,9 @@ public final class Bot extends TelegramLongPollingBot {
                         }
                     }
                 }
-                System.out.println("s");
-                if (!userSettings.get((long) p.getChatId()).equals("Бесплатные окна: " + "\n")) {
-                    System.out.println(s);
+                if (!s.equals("")) {
                     if (!userSettings.get((long) p.getChatId()).equals(s)) {
+                        System.out.println("\n" + p.getUserName() + s);
                         userSettings.put((long) p.getChatId(), s);
                         setAnswer((long) p.getChatId(), "xx", s);
                     }

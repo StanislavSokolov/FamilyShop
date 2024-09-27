@@ -1,5 +1,3 @@
-import org.telegram.telegrambots.meta.api.objects.User;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -28,8 +26,8 @@ public class SQL {
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
-//        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
-        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
+//        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
             props.load(in);
         }
         String url = props.getProperty("url");
@@ -38,7 +36,8 @@ public class SQL {
         return DriverManager.getConnection(url, username,password);
     }
 
-    public static void checkId(Long chatId, String userName) {
+    public static boolean checkId(Long chatId, String userName) {
+        boolean b = true;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             try (Connection conn = getConnection()) {
@@ -55,12 +54,14 @@ public class SQL {
                 }
                 if (!check) {
                     statement.executeUpdate("INSERT tokenshop(UserName, ChatId) VALUES ('" + userName + "', '" + chatId + "')");
+                    b = false;
                 }
 
             }
         } catch (Exception ex) {
             System.out.println(ex);
         }
+        return b;
     }
 
     public static String getToken(Long chatId, int choiceShop) {
@@ -93,10 +94,8 @@ public class SQL {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             try (Connection conn = getConnection()) {
                 Statement statement = conn.createStatement();
-//                ResultSet resultSet = statement.executeQuery("SELECT * FROM user where nameShopWB = '22'");
                 ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop where WBstats = '22'");
                 while (resultSet.next()) {
-//                    token = resultSet.getString("tokenStandartWB");
                     token = resultSet.getString("WB");
                 }
             }
@@ -521,6 +520,9 @@ public class SQL {
         } catch (Exception ex) {
             System.out.println(ex);
         }
+    }
+
+    public static void getUser(Long chatId, String userName) {
     }
 }
 
