@@ -289,17 +289,27 @@ public final class Bot extends TelegramLongPollingBot {
 
     public void setAnswer(ArrayList<Warehouse> warehouseArrayList) {
         ArrayList<Person> personArrayList = getListUsers();
+//        for (Warehouse wh: warehouseArrayList) {
+//            for (Date dt: wh.getDates())
+//                System.out.println(wh.getName() + dt.getDate() + " " + dt.getCoefficient());
+//        }
         for (Person p: personArrayList) {
-            ArrayList<String> stringArrayList = SQL.getListWarehouses(String.valueOf(p.getChatId()));
-            if (!stringArrayList.isEmpty()) {
+            ArrayList<Warehouse> warehouses = SQL.getListWarehousesToRemove(String.valueOf(p.getChatId()));
+            if (!warehouses.isEmpty()) {
                 String s = "";
-                for (String st: stringArrayList) {
+                for (Warehouse st: warehouses) {
                     for (Warehouse wh: warehouseArrayList) {
-                        if (st.equals(wh.getName())) {
+                        if (st.getName().equals(wh.getName())) {
                             if (!wh.getDates().isEmpty()) {
                                 s = s + "\n" + "\n" + wh.getName();
-                                for (String day: wh.getDates()) {
-                                    s = s + "\n" + day;
+//                                System.out.println(s);
+                                for (Date day: wh.getDates()) {
+//                                    System.out.println(st.getColumn());
+                                    if (day.getCoefficient() <= st.getCoefficient()) {
+                                        if (day.getCoefficient() == 0) s = s + "\n" + day.getDate() + " (Бесплатно)";
+                                        else s = s + "\n" + day.getDate() + " (x" + day.getCoefficient() + ")";
+                                    }
+
                                 }
                             }
                         }

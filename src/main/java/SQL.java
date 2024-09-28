@@ -483,8 +483,7 @@ public class SQL {
                 ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
                 while (resultSet.next()) {
                     for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
-                        if (resultSet.getInt(wh.getColumn()) != -1) warehousesArrayList.add(new Warehouse(wh.getName(), wh.getId(), wh.getColumn()));
-                    }
+                        if (resultSet.getInt(wh.getColumn()) != -1) warehousesArrayList.add(new Warehouse(wh.getName(), wh.getId(), wh.getColumn(), resultSet.getInt(wh.getColumn())));                    }
                 }
             }
         } catch (Exception ex) {

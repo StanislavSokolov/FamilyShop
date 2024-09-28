@@ -112,15 +112,14 @@ public class WarehouseSearch extends Thread {
                     for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
                         if (((Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0) ||
                                 (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 1) ||
-                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 2)) & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
+                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 2) ||
+                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 3)) & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
                             String coefficient = "Бесплатно";
                             if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) != 0) coefficient = "x" + jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString();
-                            wh.getDates().add(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
+//                            System.out.println("HERE");
+                            wh.getDates().add(new Date(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
                                     + ": "
-                                    + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName"))
-                                    + " ("
-                                    + coefficient
-                                    + ")");
+                                    + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName")), Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString())));
 //                            coincidence = true;
                         }
                     }
