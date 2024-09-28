@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +59,14 @@ public final class Bot extends TelegramLongPollingBot {
             if (!checkChatId(msg.getChatId(), userName)) {
                 userSettings.put(msg.getChatId(), "");
             }
-            if (text.equals("/setting")) {
-                setting(chatId);
+            if (text.equals("/warehouses")) {
+                warehouses(chatId);
+            }
+            if (text.equals("/coefficients")) {
+                coefficients(chatId);
             }
             if (text.equals("/start")) {
-                setAnswer(msg.getChatId(), userName, "Добро пожаловать в сервис поиска бесплатных окон для поставок на склады Wildberries! Ты можешь сам настроить список складов, а я буду присылать тебе уведомления, если найду там свободные окна. Чтобы посмотреть и настроить список складов нажми на кнопку \"Menu\" и выбери раздел \"Настройки\".");
+                setAnswer(msg.getChatId(), userName, "Добро пожаловать в сервис поиска бесплатных окон для поставок на склады Wildberries! Ты можешь сам настроить список складов и коэффициенты приемки, а я буду присылать тебе уведомления, если найду там подходящие окна. Чтобы посмотреть и настроить список складов  и коэффициенты приемки нажми на кнопку \"Menu\" и выбери соответствующий раздел.");
             }
         }
         else if (update.hasCallbackQuery()) {
@@ -77,23 +79,72 @@ public final class Bot extends TelegramLongPollingBot {
                 remove(chatId);
             }
             if (text.equals("back")) {
-                setting(chatId);
+                warehouses(chatId);
             }
             for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
                 if (text.equals(wh.getColumn())) {
-                    update(chatId, wh.getColumn());
+                    updateListWarehouses(chatId, wh.getColumn());
                 }
+            }
+            if (text.equals("free") || text.equals("x1") || text.equals("x2") || text.equals("x3")) {
+                System.out.println(text);
+                updateCoefficient(chatId, text);
             }
         }
     }
 
-    private void update(String chatId, String column) {
+    private void coefficients(String chatId) {
+        SendMessage sendMessage = new SendMessage();
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardButton inlineKeyboardButtonFree = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButtonX1 = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButtonX2 = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButtonX3 = new InlineKeyboardButton();
+        inlineKeyboardButtonFree.setText("Бесплатно");
+        inlineKeyboardButtonFree.setCallbackData("free");
+        inlineKeyboardButtonX1.setText("x1");
+        inlineKeyboardButtonX1.setCallbackData("x1");
+        inlineKeyboardButtonX2.setText("x2");
+        inlineKeyboardButtonX2.setCallbackData("x2");
+        inlineKeyboardButtonX3.setText("x3");
+        inlineKeyboardButtonX3.setCallbackData("x3");
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(inlineKeyboardButtonFree);
+        keyboardButtonsRow.add(inlineKeyboardButtonX1);
+        keyboardButtonsRow.add(inlineKeyboardButtonX2);
+        keyboardButtonsRow.add(inlineKeyboardButtonX3);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        sendMessage.setChatId(chatId);
+        String text = "Выберите коэффициент, до которого необходимо вести поиск окон для поставки:";
+        sendMessage.setText(text);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        sendMessage.enableHtml(true);
+        setAnswer(sendMessage);
+    }
+
+    private void updateListWarehouses(String chatId, String column) {
         SQL.update(chatId, column, SQL.getWarehouseValue(chatId, column));
-        setting(chatId);
+        warehouses(chatId);
+    }
+
+    private void updateCoefficient(String chatId, String coefficient) {
+        int coef = 0;
+        System.out.println(coef);
+        if (!coefficient.equals("free")) coef = Integer.parseInt(coefficient.substring(1, 2));
+        System.out.println(coef);
+        for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
+            SQL.update(chatId, wh.getColumn(), coef);
+        }
+        System.out.println(coef);
+        if (coef == 0) setAnswer(Integer.parseInt(chatId), "Только бесплатные приемки");
+        else setAnswer(Integer.parseInt(chatId), "Установлен коэффициент " + coefficient);
+
     }
 
     // Шаг "Выбор действия"
-    private void setting(String chatId) {
+    private void warehouses(String chatId) {
         SendMessage sendMessage = new SendMessage();
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         InlineKeyboardButton inlineKeyboardButtonAdd = new InlineKeyboardButton();

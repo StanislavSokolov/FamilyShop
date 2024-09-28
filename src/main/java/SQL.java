@@ -483,7 +483,7 @@ public class SQL {
                 ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
                 while (resultSet.next()) {
                     for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
-                        if (resultSet.getInt(wh.getColumn()) == 0) warehousesArrayList.add(new Warehouse(wh.getName(), wh.getId(), wh.getColumn()));
+                        if (resultSet.getInt(wh.getColumn()) != -1) warehousesArrayList.add(new Warehouse(wh.getName(), wh.getId(), wh.getColumn()));
                     }
                 }
             }
@@ -494,14 +494,14 @@ public class SQL {
     }
 
     public static int getWarehouseValue(String chatId, String column) {
-        int result = 0;
+        int result = -1;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             try (Connection conn = getConnection()) {
                 Statement statement = conn.createStatement();
                 ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
                 while (resultSet.next()) {
-                    if (resultSet.getInt(column) == 0) result = -1;
+                    if (resultSet.getInt(column) == -1) result = 0;
                 }
             }
         } catch (Exception ex) {

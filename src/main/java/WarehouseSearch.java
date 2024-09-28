@@ -133,7 +133,7 @@ public class WarehouseSearch extends Thread {
                 e.getMessage();
             }
             try {
-                sleep(7000);
+                sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
