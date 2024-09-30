@@ -26,8 +26,8 @@ public class SQL {
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
-        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
-//        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
+//        try (InputStream in = Files.newInputStream(Paths.get("src/main/resources/familyshop.properties"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("opt/java/familyshop.properties"))) {
             props.load(in);
         }
         String url = props.getProperty("url");
@@ -53,7 +53,7 @@ public class SQL {
                     }
                 }
                 if (!check) {
-                    statement.executeUpdate("INSERT tokenshop(UserName, ChatId) VALUES ('" + userName + "', '" + chatId + "')");
+                    statement.executeUpdate("INSERT tokenshop(UserName, ChatId, WB, WBstats, Ozon, OzonClient, YM, ELECTROSTAL, TULA, NEVINOMISK, KRASNODAR, KOLEDINO, KAZAN) VALUES ('" + userName + "', '" + chatId + "', '', '', '', 0, 0, 0, 0, -1, 0, 0 ,0)");
                     b = false;
                 }
 

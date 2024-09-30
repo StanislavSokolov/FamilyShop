@@ -1,4 +1,4 @@
-public class Date {
+public class DayToSend {
     String date = "";
     int coefficient = 0;
 
@@ -18,7 +18,7 @@ public class Date {
         this.coefficient = coefficient;
     }
 
-    public Date(String date, int coefficient) {
+    public DayToSend(String date, int coefficient) {
         this.date = date;
         this.coefficient = coefficient;
     }

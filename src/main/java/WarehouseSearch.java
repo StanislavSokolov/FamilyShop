@@ -101,7 +101,7 @@ public class WarehouseSearch extends Thread {
         String response = null;
 
         for (Warehouse wh: warehouseArrayList) {
-            wh.setDates(new ArrayList<>());
+            wh.setDayToSends(new ArrayList<>());
             generetedURL = URLRequestResponse.generateURL("wb","coefficients", "", String.valueOf(wh.getId()));
 //            boolean coincidence = false;
             try {
@@ -117,7 +117,7 @@ public class WarehouseSearch extends Thread {
                             String coefficient = "Бесплатно";
                             if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) != 0) coefficient = "x" + jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString();
 //                            System.out.println("HERE");
-                            wh.getDates().add(new Date(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
+                            wh.getDayToSends().add(new DayToSend(String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("date")).substring(0, 10)
                                     + ": "
                                     + String.valueOf(jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName")), Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString())));
 //                            coincidence = true;
@@ -132,7 +132,7 @@ public class WarehouseSearch extends Thread {
                 e.getMessage();
             }
             try {
-                sleep(10000);
+                sleep(8000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

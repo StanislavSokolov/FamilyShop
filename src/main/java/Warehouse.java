@@ -10,7 +10,7 @@ public class Warehouse {
         this.id = id;
         this.column = column;
         this.coefficient = coefficient;
-        this.dates = dates;
+        this.dayToSends = dayToSends;
     }
 
     public int getCoefficient() {
@@ -22,14 +22,14 @@ public class Warehouse {
     }
 
     private int coefficient;
-    private ArrayList<Date> dates;
+    private ArrayList<DayToSend> dayToSends;
 
-    public ArrayList<Date> getDates() {
-        return dates;
+    public ArrayList<DayToSend> getDayToSends() {
+        return dayToSends;
     }
 
-    public void setDates(ArrayList<Date> dates) {
-        this.dates = dates;
+    public void setDayToSends(ArrayList<DayToSend> dayToSends) {
+        this.dayToSends = dayToSends;
     }
 
     public String getName() {
@@ -60,6 +60,6 @@ public class Warehouse {
         this.name = name;
         this.id = id;
         this.column = column;
-        dates = new ArrayList<>();
+        dayToSends = new ArrayList<>();
     }
 }

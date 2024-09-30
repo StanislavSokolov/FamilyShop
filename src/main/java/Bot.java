@@ -300,16 +300,15 @@ public final class Bot extends TelegramLongPollingBot {
                 for (Warehouse st: warehouses) {
                     for (Warehouse wh: warehouseArrayList) {
                         if (st.getName().equals(wh.getName())) {
-                            if (!wh.getDates().isEmpty()) {
-                                s = s + "\n" + "\n" + wh.getName();
-//                                System.out.println(s);
-                                for (Date day: wh.getDates()) {
-//                                    System.out.println(st.getColumn());
+                            if (!wh.getDayToSends().isEmpty()) {
+                                boolean check = false;
+                                for (DayToSend day: wh.getDayToSends()) {
                                     if (day.getCoefficient() <= st.getCoefficient()) {
+                                        if (!check) s = s + "\n" + "\n" + wh.getName();
+                                        check = true;
                                         if (day.getCoefficient() == 0) s = s + "\n" + day.getDate() + " (Бесплатно)";
                                         else s = s + "\n" + day.getDate() + " (x" + day.getCoefficient() + ")";
                                     }
-
                                 }
                             }
                         }
