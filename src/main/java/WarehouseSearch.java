@@ -38,6 +38,8 @@ public class WarehouseSearch extends Thread {
   
     private static ArrayList<Warehouse> warehouseArrayList;
 
+    private boolean startMessage = false;
+
     String prevAnswer = "Бесплатные окна: ";
 
 //    ArrayList<Warehouse> warehouseArrayList;
@@ -79,7 +81,8 @@ public class WarehouseSearch extends Thread {
     }
 
     private void prepare() {
-
+        if (!startMessage) bot.setAnswer();
+        startMessage = true;
     }
 
     private void warehouses() {
@@ -110,10 +113,7 @@ public class WarehouseSearch extends Thread {
                 if (!response.equals("{\"errors\":[\"(api-new) too many requests\"]}")) {
                     JSONObject jsonObject = new JSONObject("{\"data\":" + response + "}");
                     for (int i = 0; i < jsonObject.getJSONArray("data").length(); i++) {
-                        if (((Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 0) ||
-                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 1) ||
-                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 2) ||
-                                (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) == 3)) & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
+                        if (((Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) >= 0) & (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) <= 10)) & (jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Короба") || jsonObject.getJSONArray("data").getJSONObject(i).get("boxTypeName").equals("Монопаллеты"))) {
                             String coefficient = "Бесплатно";
                             if (Integer.parseInt(jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString()) != 0) coefficient = "x" + jsonObject.getJSONArray("data").getJSONObject(i).get("coefficient").toString();
 //                            System.out.println("HERE");
@@ -132,7 +132,7 @@ public class WarehouseSearch extends Thread {
                 e.getMessage();
             }
             try {
-                sleep(8000);
+                sleep(12000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

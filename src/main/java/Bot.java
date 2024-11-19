@@ -86,7 +86,7 @@ public final class Bot extends TelegramLongPollingBot {
                     updateListWarehouses(chatId, wh.getColumn());
                 }
             }
-            if (text.equals("free") || text.equals("x1") || text.equals("x2") || text.equals("x3")) {
+            if (text.equals("free") || text.equals("x1") || text.equals("x2") || text.equals("x3") || text.equals("x5") || text.equals("x10")) {
                 System.out.println(text);
                 updateCoefficient(chatId, text);
             }
@@ -100,6 +100,8 @@ public final class Bot extends TelegramLongPollingBot {
         InlineKeyboardButton inlineKeyboardButtonX1 = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButtonX2 = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButtonX3 = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButtonX5 = new InlineKeyboardButton();
+        InlineKeyboardButton inlineKeyboardButtonX10 = new InlineKeyboardButton();
         inlineKeyboardButtonFree.setText("Бесплатно");
         inlineKeyboardButtonFree.setCallbackData("free");
         inlineKeyboardButtonX1.setText("x1");
@@ -108,11 +110,17 @@ public final class Bot extends TelegramLongPollingBot {
         inlineKeyboardButtonX2.setCallbackData("x2");
         inlineKeyboardButtonX3.setText("x3");
         inlineKeyboardButtonX3.setCallbackData("x3");
+        inlineKeyboardButtonX5.setText("x5");
+        inlineKeyboardButtonX5.setCallbackData("x5");
+        inlineKeyboardButtonX10.setText("x10");
+        inlineKeyboardButtonX10.setCallbackData("x10");
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButtonFree);
         keyboardButtonsRow.add(inlineKeyboardButtonX1);
         keyboardButtonsRow.add(inlineKeyboardButtonX2);
         keyboardButtonsRow.add(inlineKeyboardButtonX3);
+        keyboardButtonsRow.add(inlineKeyboardButtonX5);
+        keyboardButtonsRow.add(inlineKeyboardButtonX10);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow);
         inlineKeyboardMarkup.setKeyboard(rowList);
@@ -132,7 +140,8 @@ public final class Bot extends TelegramLongPollingBot {
     private void updateCoefficient(String chatId, String coefficient) {
         int coef = 0;
         System.out.println(coef);
-        if (!coefficient.equals("free")) coef = Integer.parseInt(coefficient.substring(1, 2));
+        if (!coefficient.equals("free") & !coefficient.equals("x10")) coef = Integer.parseInt(coefficient.substring(1, 2));
+        if (coefficient.equals("x10")) coef = Integer.parseInt(coefficient.substring(1, 3));
         System.out.println(coef);
         for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
             SQL.update(chatId, wh.getColumn(), coef);
@@ -285,6 +294,14 @@ public final class Bot extends TelegramLongPollingBot {
 
     public void setAnswer(int chatId, String result) {
         setAnswer((long) chatId, "", result);
+    }
+
+    public void setAnswer() {
+        ArrayList<Person> personArrayList = getListUsers();
+        String hello = "Появилась возможность установить новые коэффициенты x5 и x10, до которых включительно будет осуществляться поиск соответствующих окон приемки. Зайдите в \"Меню\" и настройте коэффициенты.";
+        for (Person p: personArrayList) {
+            setAnswer((long) p.getChatId(), "xx", hello);
+        }
     }
 
     public void setAnswer(ArrayList<Warehouse> warehouseArrayList) {
