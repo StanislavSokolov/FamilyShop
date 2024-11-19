@@ -53,12 +53,23 @@ public class WarehouseSearch extends Thread {
     public WarehouseSearch(Bot bot) {
         warehouseArrayList = new ArrayList<>();
 
-        warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL, ELECTROSTAL_DESCRIPTION_2));
-        warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA, TULA_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK, NEVINOMISK_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR, KRASNODAR_DESCRIPTION_2));
-        warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO, KOLEDINO_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN, KAZAN_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO, KOLEDINO_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA, TULA_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL, ELECTROSTAL_DESCRIPTION_2));
+
+
+
+
+
+//        warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL, ELECTROSTAL_DESCRIPTION_2));
+//        warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA, TULA_DESCRIPTION_2));
+//        warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK, NEVINOMISK_DESCRIPTION_2));
+//        warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR, KRASNODAR_DESCRIPTION_2));
+//        warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO, KOLEDINO_DESCRIPTION_2));
+//        warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN, KAZAN_DESCRIPTION_2));
 
         this.bot = bot;
     }
