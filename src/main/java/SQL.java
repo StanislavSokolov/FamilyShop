@@ -521,6 +521,23 @@ public class SQL {
         }
     }
 
+    public static ArrayList<Person> getUserName(String chatId) {
+        ArrayList<Person> usersArrayList = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop");
+                while (resultSet.next()) {
+                    usersArrayList.add(new Person(resultSet.getString("UserName"), resultSet.getInt("ChatId")));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return usersArrayList;
+    }
+
     public static void getUser(Long chatId, String userName) {
     }
 }

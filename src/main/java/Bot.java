@@ -87,7 +87,6 @@ public final class Bot extends TelegramLongPollingBot {
                 }
             }
             if (text.equals("free") || text.equals("x1") || text.equals("x2") || text.equals("x3") || text.equals("x5") || text.equals("x10")) {
-                System.out.println(text);
                 updateCoefficient(chatId, text);
             }
         }
@@ -139,17 +138,15 @@ public final class Bot extends TelegramLongPollingBot {
 
     private void updateCoefficient(String chatId, String coefficient) {
         int coef = 0;
-        System.out.println(coef);
         if (!coefficient.equals("free") & !coefficient.equals("x10")) coef = Integer.parseInt(coefficient.substring(1, 2));
         if (coefficient.equals("x10")) coef = Integer.parseInt(coefficient.substring(1, 3));
-        System.out.println(coef);
         for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
             SQL.update(chatId, wh.getColumn(), coef);
         }
-        System.out.println(coef);
         if (coef == 0) setAnswer(Integer.parseInt(chatId), "Только бесплатные приемки");
         else setAnswer(Integer.parseInt(chatId), "Установлен коэффициент " + coefficient);
-
+        ArrayList<Person> p = SQL.getUserName(chatId);
+        System.out.println(p.get(0).getUserName() + " " + "установил(а) коэффициент" + " " + "x" + coef);
     }
 
     // Шаг "Выбор действия"
@@ -300,7 +297,7 @@ public final class Bot extends TelegramLongPollingBot {
         ArrayList<Person> personArrayList = getListUsers();
         String hello = "Появилась возможность установить новые коэффициенты x5 и x10, до которых включительно будет осуществляться поиск соответствующих окон приемки. Зайдите в \"Меню\" и настройте коэффициенты.";
         for (Person p: personArrayList) {
-            setAnswer((long) p.getChatId(), "xx", hello);
+//            setAnswer((long) p.getChatId(), "xx", hello);
         }
     }
 
