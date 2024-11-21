@@ -140,7 +140,7 @@ public final class Bot extends TelegramLongPollingBot {
         int coef = 0;
         if (!coefficient.equals("free") & !coefficient.equals("x10")) coef = Integer.parseInt(coefficient.substring(1, 2));
         if (coefficient.equals("x10")) coef = Integer.parseInt(coefficient.substring(1, 3));
-        for (Warehouse wh: WarehouseSearch.getWarehouseArrayList()) {
+        for (Warehouse wh: SQL.getListWarehousesToRemove(chatId)) {
             SQL.update(chatId, wh.getColumn(), coef);
         }
         if (coef == 0) setAnswer(Integer.parseInt(chatId), "Только бесплатные приемки");
