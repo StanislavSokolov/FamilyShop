@@ -494,13 +494,18 @@ public class SQL {
 
     public static int getWarehouseValue(String chatId, String column) {
         int result = -1;
+        int currentCoef = -1;
+        ArrayList<Warehouse> warehouses = WarehouseSearch.getWarehouseArrayList();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
             try (Connection conn = getConnection()) {
                 Statement statement = conn.createStatement();
                 ResultSet resultSet = statement.executeQuery("SELECT * FROM tokenshop WHERE ChatId = '" + chatId +"'");
                 while (resultSet.next()) {
-                    if (resultSet.getInt(column) == -1) result = 0;
+                    for (Warehouse wh: warehouses) {
+                        if (resultSet.getInt(wh.getColumn()) >= 0) currentCoef = resultSet.getInt(wh.getColumn());
+                    }
+                    if (resultSet.getInt(column) == -1) result = currentCoef;
                 }
             }
         } catch (Exception ex) {
