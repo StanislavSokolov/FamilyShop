@@ -132,7 +132,8 @@ public final class Bot extends TelegramLongPollingBot {
     }
 
     private void updateListWarehouses(String chatId, String column) {
-        SQL.update(chatId, column, SQL.getWarehouseValue(chatId, column));
+        if (SQL.getListWarehouses(chatId).isEmpty()) SQL.update(chatId, column, 0);
+        else SQL.update(chatId, column, SQL.getWarehouseValue(chatId, column));
         warehouses(chatId);
     }
 
