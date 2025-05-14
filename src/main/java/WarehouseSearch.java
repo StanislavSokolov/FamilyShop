@@ -35,7 +35,13 @@ public class WarehouseSearch extends Thread {
     static final String KAZAN_DESCRIPTION = "ID :" + KAZAN + "name: Казань, address: Республика Татарстан, Зеленодольск, промышленный парк Зеленодольск, 20";
     static final String KAZAN_DESCRIPTION_1 = "Казань";
     static final String KAZAN_DESCRIPTION_2 = "KAZAN";
-  
+
+    static final int RYAZAN = 301760;
+    static final String RYAZAN_DESCRIPTION = "ID :" + RYAZAN + "name: Рязань, address: Индустриальный промышленный парк Рязанский, Тюшевское сельское поселение, Рязанский район";
+    static final String RYAZAN_DESCRIPTION_1 = "Рязань";
+    static final String RYAZAN_DESCRIPTION_2 = "RYAZAN";
+
+
     private static ArrayList<Warehouse> warehouseArrayList;
 
     private boolean startMessage = false;
@@ -59,17 +65,7 @@ public class WarehouseSearch extends Thread {
         warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO, KOLEDINO_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA, TULA_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL, ELECTROSTAL_DESCRIPTION_2));
-
-
-
-
-
-//        warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL, ELECTROSTAL_DESCRIPTION_2));
-//        warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA, TULA_DESCRIPTION_2));
-//        warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK, NEVINOMISK_DESCRIPTION_2));
-//        warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR, KRASNODAR_DESCRIPTION_2));
-//        warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO, KOLEDINO_DESCRIPTION_2));
-//        warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN, KAZAN_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(RYAZAN_DESCRIPTION_1, RYAZAN, RYAZAN_DESCRIPTION_2));
 
         this.bot = bot;
     }
@@ -81,13 +77,6 @@ public class WarehouseSearch extends Thread {
         while (true) {
             prepare();
             search();
-//            try {
-//                search();
-//                sleep(650000);
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
         }
     }
 
