@@ -85,16 +85,15 @@ public final class Bot extends TelegramLongPollingBot {
                 String answer = getStocks();
                 setAnswer((long) chatId, userName, answer);
             } else if ((text.equals("/control"))) {
-                setAnswer((long) chatId, userName, "Сервис недоступен");
+                setAnswer((long) chatId, userName, "Введите артикул товара, чтобы установить для него новые цены и скидки");
             } else {
                 setAnswer(chatId, userName, "Такой запрос не обрабатывается");
             }
-//                int newValue = parseInt(text);
-//                if (newValue == -1) {
+
         } else if (update.hasCallbackQuery()) {
             data = update.getCallbackQuery().getData();
-            if (data.equals("Первое")) {
-                String answerString = "Вы выбрали первое";
+            if (data.equals("Цена")) {
+                String answerString = "Введите артикул";
                 setAnswer(chatId, userName, answerString);
             } else if (data.equals("Второе")) {
                 String answerString = "Вы выбрали второе";
@@ -139,20 +138,16 @@ public final class Bot extends TelegramLongPollingBot {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
         InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
-        inlineKeyboardButton.setText("Остатки");
-        inlineKeyboardButton.setCallbackData("Остатки");
-        inlineKeyboardButton1.setText("Продажи");
-        inlineKeyboardButton1.setCallbackData("Продажи");
-        inlineKeyboardButton2.setText("Цена");
-        inlineKeyboardButton2.setCallbackData("Цена");
-        inlineKeyboardButton3.setText("Вернуться к выбору магазина");
-        inlineKeyboardButton3.setCallbackData("Вернуться к выбору магазина");
+        inlineKeyboardButton.setText("Цена");
+        inlineKeyboardButton.setCallbackData("Цена");
+        inlineKeyboardButton1.setText("Скидка");
+        inlineKeyboardButton1.setCallbackData("Скидка");
+        inlineKeyboardButton3.setText("Вернуться в основное меню");
+        inlineKeyboardButton3.setCallbackData("Вернуться в основное меню");
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(inlineKeyboardButton);
         keyboardButtonsRow.add(inlineKeyboardButton1);
-        keyboardButtonsRow.add(inlineKeyboardButton2);
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         keyboardButtonsRow1.add(inlineKeyboardButton3);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -160,7 +155,7 @@ public final class Bot extends TelegramLongPollingBot {
         rowList.add(keyboardButtonsRow1);
         inlineKeyboardMarkup.setKeyboard(rowList);
         sendMessage.setChatId(chatId.toString());
-        sendMessage.setText("Выберите действие");
+        sendMessage.setText("Что изменить?");
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
         setAnswer(sendMessage);
     }
@@ -209,6 +204,14 @@ public final class Bot extends TelegramLongPollingBot {
                 + "\n"
                 + "\n"
                 + SQL.getStocksString();
+    }
+
+    private String setPrice() {
+        return "Метод в разработке и скоро будет доступен";
+    }
+
+    private String setDiscount() {
+        return "Метод в разработке и скоро будет доступен";
     }
 
 
