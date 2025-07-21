@@ -393,6 +393,26 @@ public class SQL {
         }
         return items;
     }
+
+    public static String getProduct(String supplierArticle) {
+        System.out.println(supplierArticle);
+        ArrayList<Product> productsArrayList = new ArrayList<>();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+            try (Connection conn = getConnection()) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT * FROM product WHERE supplierArticle = '" + supplierArticle + "'");
+                while (resultSet.next()) {
+                    System.out.println("csdsdcv");
+                    productsArrayList.add(new Product(resultSet.getInt("id"), resultSet.getString("supplierArticle"), resultSet.getString("nmId"), resultSet.getString("subject"), resultSet.getInt("price"), resultSet.getInt("discount")));
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return productsArrayList.isEmpty() ? "В вашем магазине нет товара с таким артикулом" :
+                productsArrayList.get(0).getSubject() + " " + productsArrayList.get(0).getSupplierArticle() + " " + productsArrayList.get(0).getPrice() + " " + productsArrayList.get(0).getDiscount();
+    }
 }
 
 

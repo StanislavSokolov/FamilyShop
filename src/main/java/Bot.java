@@ -84,24 +84,25 @@ public final class Bot extends TelegramLongPollingBot {
             } else if ((text.equals("/stock"))) {
                 String answer = getStocks();
                 setAnswer((long) chatId, userName, answer);
-            } else if ((text.equals("/control"))) {
-                setAnswer((long) chatId, userName, "Введите артикул товара, чтобы установить для него новые цены и скидки");
+//            } else if ((text.equals("/control"))) {
+//                setAnswer((long) chatId, userName, "Введите артикул товара, чтобы установить для него новые цены и скидки");
             } else {
                 setAnswer(chatId, userName, "Такой запрос не обрабатывается");
             }
 
         } else if (update.hasCallbackQuery()) {
-            data = update.getCallbackQuery().getData();
-            if (data.equals("Цена")) {
-                String answerString = "Введите артикул";
-                setAnswer(chatId, userName, answerString);
-            } else if (data.equals("Второе")) {
-                String answerString = "Вы выбрали второе";
-                setAnswer(chatId, userName, answerString);
-            } else if (data.equals("Третье")) {
-                String answerString = "Вы выбрали третье";
-                setAnswer(chatId, userName, answerString);
-            }
+
+//            data = update.getCallbackQuery().getData();
+//            if (data.equals("Цена")) {
+//                String answerString = "Введите артикул";
+//                setAnswer(chatId, userName, answerString);
+//            } else if (data.equals("Второе")) {
+//                String answerString = "Вы выбрали второе";
+//                setAnswer(chatId, userName, answerString);
+//            } else if (data.equals("Третье")) {
+//                String answerString = "Вы выбрали третье";
+//                setAnswer(chatId, userName, answerString);
+//            }
         }
     }
 
@@ -204,6 +205,10 @@ public final class Bot extends TelegramLongPollingBot {
                 + "\n"
                 + "\n"
                 + SQL.getStocksString();
+    }
+
+    private String getProduct(String supplierArticle) {
+        return SQL.getProduct(supplierArticle);
     }
 
     private String setPrice() {
