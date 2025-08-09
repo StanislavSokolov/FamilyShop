@@ -41,6 +41,21 @@ public class WarehouseSearch extends Thread {
     static final String RYAZAN_DESCRIPTION_1 = "Рязань";
     static final String RYAZAN_DESCRIPTION_2 = "RYAZAN";
 
+    static final int UTKINAZAVOD = 2737;
+    static final String UTKINAZAVOD_DESCRIPTION = "ID :" + UTKINAZAVOD + "name: Уткина Заводь, address: Всеволожский р-н, г.п. Свердловское, дер. Новосаратовка, участок № 1 (промзона Уткина Заводь, комплекс МЛП, корпус 4, парадная 4)";
+    static final String UTKINAZAVOD_DESCRIPTION_1 = "Уткина Заводь";
+    static final String UTKINAZAVOD_DESCRIPTION_2 = "UTKINAZAVOD";
+
+    static final int PODOLSK = 117501;
+    static final String PODOLSK_DESCRIPTION = "ID :" + PODOLSK + "name: Подольск, address: ул. Поливановская, 9с5";
+    static final String PODOLSK_DESCRIPTION_1 = "Подольск";
+    static final String PODOLSK_DESCRIPTION_2 = "PODOLSK";
+
+    static final int EKATERINBURG14G = 1733;
+    static final String EKATERINBURG14G_DESCRIPTION = "ID :" + EKATERINBURG14G + "name: Екатеринбург, address: ул. Испытателей, 14Г";
+    static final String EKATERINBURG14G_DESCRIPTION_1 = "Екатеринбург - Испытателей 14г";
+    static final String EKATERINBURG14G_DESCRIPTION_2 = "EKATERINBURG14G";
+
 
     private static ArrayList<Warehouse> warehouseArrayList;
 
@@ -59,10 +74,13 @@ public class WarehouseSearch extends Thread {
     public WarehouseSearch(Bot bot) {
         warehouseArrayList = new ArrayList<>();
 
+        warehouseArrayList.add(new Warehouse(UTKINAZAVOD_DESCRIPTION_1, UTKINAZAVOD, UTKINAZAVOD_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(NEVINOMISK_DESCRIPTION_1, NEVINOMISK, NEVINOMISK_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(KRASNODAR_DESCRIPTION_1, KRASNODAR, KRASNODAR_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(KAZAN_DESCRIPTION_1, KAZAN, KAZAN_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(EKATERINBURG14G_DESCRIPTION_1, EKATERINBURG14G, EKATERINBURG14G_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(KOLEDINO_DESCRIPTION_1, KOLEDINO, KOLEDINO_DESCRIPTION_2));
+        warehouseArrayList.add(new Warehouse(PODOLSK_DESCRIPTION_1, PODOLSK, PODOLSK_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(TULA_DESCRIPTION_1, TULA, TULA_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(ELECTROSTAL_DESCRIPTION_1, ELECTROSTAL, ELECTROSTAL_DESCRIPTION_2));
         warehouseArrayList.add(new Warehouse(RYAZAN_DESCRIPTION_1, RYAZAN, RYAZAN_DESCRIPTION_2));
@@ -74,6 +92,7 @@ public class WarehouseSearch extends Thread {
     public void run() {
 
         super.run();
+//        warehouses();
         while (true) {
             prepare();
             search();
@@ -132,7 +151,7 @@ public class WarehouseSearch extends Thread {
                 e.getMessage();
             }
             try {
-                sleep(12000);
+                sleep(9000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
