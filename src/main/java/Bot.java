@@ -1,6 +1,4 @@
 import com.sun.scenario.Settings;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -10,8 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,8 +75,17 @@ public final class Bot extends TelegramLongPollingBot {
                 String answer = getItemOfTheDay();
                 setAnswer((long) chatId, userName, answer);
             } else if ((text.equals("/moreinformation"))) {
-                String answer = getMoreInformstion();
-                setAnswer((long) chatId, userName, answer);
+                //String answer = getMoreInformation();
+                ArrayList<Item> item = SQL.getMoreInformationArrayList();
+                for (int i = 0; i < item.size(); i = i+20) {
+                    ArrayList<Item> item20 = new ArrayList<>();
+                    for (int j = i; (j < i + 20) && (j < item.size()); j++) {
+                        item20.add(item.get(j));
+                    }
+                    String answer = getMoreInformation(item20);
+                    System.out.println(answer);
+                    setAnswer((long) chatId, userName, answer);
+                }
             } else if ((text.equals("/stock"))) {
                 String answer = getStocks();
                 setAnswer((long) chatId, userName, answer);
@@ -193,11 +198,35 @@ public final class Bot extends TelegramLongPollingBot {
                 + SQL.getItemOfTheDayString();
     }
 
-    private String getMoreInformstion() {
+    private String getMoreInformation() {
         return "Подробная статистика: "
                 + "\n"
                 + "\n"
-                + SQL.getMoreInformstionString();
+                + SQL.getMoreInformationString();
+    }
+
+    private String getMoreInformation(ArrayList<Item> items) {
+        String item = "";
+        if (!items.isEmpty()) {
+            for (Item i : items) {
+                item = item + i.getSubject() + " (" + i.getSupplierArticle() + "): "
+                        + "\n"
+                        + "\n"
+                        + "Закали: "
+                        + i.getCountOrders()
+                        + " шт."
+                        + "\n"
+                        + "Купили: "
+                        + i.getCountSales()
+                        + " шт."
+                        + "\n"
+                        + "\n";
+            }
+        }
+        return "Подробная статистика: "
+                + "\n"
+                + "\n"
+                + item;
     }
 
     private String getStocks() {

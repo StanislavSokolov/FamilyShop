@@ -193,7 +193,7 @@ public class SQL {
         return i;
     }
 
-    public static String getMoreInformstionString() {
+    public static String getMoreInformationString() {
         ArrayList<Item> itemsArrayList = getItemSalesOrders(getItemsArrayListStatus());
         String item = "";
         if (!itemsArrayList.isEmpty()) {
@@ -259,6 +259,31 @@ public class SQL {
         }
 
         return item;
+    }
+
+    public static ArrayList<Item> getMoreInformationArrayList() {
+        ArrayList<Item> itemsArrayList = getItemSalesOrders(getItemsArrayListStatus());
+        String item = "";
+        if (!itemsArrayList.isEmpty()) {
+            itemsArrayList.sort((o1, o2) -> o2.getCount() - o1.getCount());
+            for (Item i: itemsArrayList) {
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+                    try (Connection conn = getConnection()) {
+                        Statement statement = conn.createStatement();
+                        ResultSet resultSet = statement.executeQuery("SELECT * FROM product WHERE id = " + i.getProduct_id());
+                        while (resultSet.next()) {
+                            i.setSubject(resultSet.getString("subject"));
+                            i.setSupplierArticle(resultSet.getString("supplierArticle"));
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+            }
+        }
+
+        return itemsArrayList;
     }
 
     public static String getItemOfTheDayString() {
@@ -360,7 +385,7 @@ public class SQL {
     public static ArrayList<Item> getItemSalesOrders(ArrayList<Item> itemsArrayList) {
         System.out.println(itemsArrayList.size());
         for (Item i: itemsArrayList) {
-            System.out.println(i.getProduct_id() + " " + i.getStatus());
+//            System.out.println(i.getProduct_id() + " " + i.getStatus());
         }
         ArrayList<Item> items = new ArrayList<>();
         for (Item i: itemsArrayList) {
@@ -389,7 +414,7 @@ public class SQL {
             }
         }
         for (Item i: items) {
-            System.out.println(i.getCountSales() + " " + i.getCountOrders() + " " + i.getCount());
+//            System.out.println(i.getCountSales() + " " + i.getCountOrders() + " " + i.getCount());
         }
         return items;
     }
